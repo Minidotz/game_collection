@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, Table, TableBody, TableCell, TableHead, TableRow, Paper, TextField, Grid, Select, MenuItem, FormControl, InputLabel, CircularProgress, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment, Snackbar, Avatar } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import './App.css';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import spacing from '@material-ui/core/styles/spacing';
 import Moment from "moment";
+import Contact from './contact';
 
 class App extends Component {
     state = {
-        response: null
+        response: null,
+        isSidebarOpen: false
     };
 
     loadData = () => {
@@ -30,16 +32,37 @@ class App extends Component {
         return body;
     };
 
+    toggleDrawer = () => {
+        this.setState({
+            isSidebarOpen: !this.state.isSidebarOpen
+        });
+    }
+
     render() {
         return (
             <Router>
-                <Navbar data={this.state.response} handleDataChange={this.loadData} />
+                <div>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <IconButton color="inherit" aria-label="Menu" onClick={this.toggleDrawer}>
+                                <Icons.Menu />
+                            </IconButton>
+                            <Typography variant="title" color="inherit">
+                                Game Collection
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
+
+                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} />} />
+                    <Route path="/contact" component={Contact} />
+                </div>
             </Router>
         );
     }
 }
 
-class Navbar extends Component {
+class Content extends Component {
     state = {
         title: '',
         company: '',
@@ -49,7 +72,6 @@ class Navbar extends Component {
         image: '',
         isEdit: false,
         isOpen: false,
-        isSidebarOpen: false,
         notification: {
             isNotifOpen: false,
             notifMessage: ''
@@ -102,12 +124,6 @@ class Navbar extends Component {
         });
     }
 
-    toggleDrawer = () => {
-        this.setState({
-            isSidebarOpen: !this.state.isSidebarOpen
-        });
-    }
-
     handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             let reader = new FileReader();
@@ -121,17 +137,6 @@ class Navbar extends Component {
     render() {
         return (
             <div>
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton color="inherit" aria-label="Menu" onClick={this.toggleDrawer}>
-                            <Icons.Menu />
-                        </IconButton>
-                        <Typography variant="title" color="inherit">
-                            Game Collection
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
                 <Paper style={{ width: '80%', textAlign: 'center', margin: 'auto', overflowX: 'auto' }}>
                     <GameTable data={this.props.data} handleRowClick={this.handleRowClick} handleDataChange={this.props.handleDataChange} handleOpenNotification={this.handleOpenNotification} />
                 </Paper>
@@ -356,7 +361,7 @@ function Sidebar(props) {
     return (
         <Drawer open={props.isOpen} onClose={props.onClose}>
             <List style={{ width: 250 }}>
-                <ListItem button>
+                <ListItem button component={Link} to="/">
                     <ListItemText primary="Home" />
                 </ListItem>
                 <ListItem button component={Link} to="/contact">
