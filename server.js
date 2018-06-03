@@ -78,8 +78,14 @@ app.post('/delete', (req, res) => {
             console.log(err);
         }
         else {
-            //Delete cover image
-            fs.unlinkSync('client/public/img/games/img-' + id);
+            if(fs.existsSync('client/public/img/games/img-' + id)) {
+                //Delete cover image
+                fs.unlink('client/public/img/games/img-' + id, err => {
+                    if(err) {
+                        console.log(err);
+                    }
+                });
+            }
         }
     })
 });
