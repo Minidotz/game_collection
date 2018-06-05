@@ -10,12 +10,13 @@ import Contact from './contact';
 class App extends Component {
     state = {
         response: null,
-        isSidebarOpen: false
+        isSidebarOpen: false,
+        loading: true
     };
 
     loadData = () => {
         this.callApi()
-            .then(res => this.setState({ response: res }))
+            .then(res => this.setState({ response: res, loading: false }))
             .catch(err => console.log(err));
     }
 
@@ -28,7 +29,6 @@ class App extends Component {
         const body = await response.json();
 
         if (response.status !== 200) throw Error(body.message);
-
         return body;
     };
 
@@ -54,7 +54,7 @@ class App extends Component {
                     </AppBar>
                     <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
 
-                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} />} />
+                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} loading={this.state.loading} />} />
                     <Route path="/contact" component={Contact} />
                 </div>
             </Router>
@@ -138,7 +138,7 @@ class Content extends Component {
         return (
             <div>
                 <Paper style={{ width: '80%', textAlign: 'center', margin: 'auto', overflowX: 'auto' }}>
-                    <GameTable data={this.props.data} handleRowClick={this.handleRowClick} handleDataChange={this.props.handleDataChange} handleOpenNotification={this.handleOpenNotification} />
+                    <GameTable data={this.props.data} handleRowClick={this.handleRowClick} handleDataChange={this.props.handleDataChange} handleOpenNotification={this.handleOpenNotification} loading={this.props.loading} />
                 </Paper>
                 <GameDialog isEdit={this.state.isEdit} handleDataChange={this.props.handleDataChange} data={this.state} handleCloseDialog={this.handleCloseDialog} handleOpenDialog={this.handleOpenDialog} handleChange={this.handleChange} handleOpenNotification={this.handleOpenNotification} handleImageChange={this.handleImageChange} />
                 <Tooltip title="Add new game">
@@ -149,7 +149,7 @@ class Content extends Component {
                 <Snackbar open={this.state.notification.isNotifOpen} message={this.state.notification.notifMessage} autoHideDuration={2000} onClose={this.handleCloseNotification} action={
                     <Button color="inherit" size="small" onClick={this.handleCloseNotification}>
                         Close
-              </Button>
+                    </Button>
                 } />
             </div>
         );
@@ -225,9 +225,11 @@ class GameTable extends Component {
                     {!this.props.data && (
                         <TableRow>
                             <TableCell colSpan={6} style={{ textAlign: 'center' }}>
-                                <div>
+                                {this.props.loading ? (
                                     <CircularProgress />
-                                </div>
+                                ) : 
+                                    'No data'
+                                }
                             </TableCell>
                         </TableRow>
                     )}
