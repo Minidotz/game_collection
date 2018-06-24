@@ -26,9 +26,43 @@
   text-align: center;
 }
 
+/* .slick-slider {
+  max-width: 90%;
+  margin: auto;
+} */
+
+/* .slick-list img {
+  width: 90%;
+  margin: 0 auto;
+} */
+.slick-slide {
+  -webkit-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+
+.coverContainer {
+  width: 93%;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.center .slick-center {
+  -moz-transform:scale(1.10);
+  -ms-transform:scale(1.10);
+  -o-transform:scale(1.10);
+  -webkit-transform:scale(1.10);
+  transform:scale(1.10);
+}
+
+.slick-list {
+  height: 22em;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500"
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";

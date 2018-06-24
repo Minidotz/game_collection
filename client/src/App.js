@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, Table, TableBody, TableCell, TableHead, TableRow, Paper, TextField, Grid, Select, MenuItem, FormControl, InputLabel, CircularProgress, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment, Snackbar, Avatar } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, Table, TableBody, TableCell, TableHead, TableRow, TextField, Grid, Select, MenuItem, FormControl, InputLabel, CircularProgress, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment, Snackbar, Avatar, Card, CardMedia, CardContent } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import './App.css';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route, Redirect } from 'react-router-dom';
 import spacing from '@material-ui/core/styles/spacing';
 import Moment from "moment";
-import Contact from './contact';
+import Contact from './Contact';
+import Slider from 'react-slick';
 
 class App extends Component {
     state = {
         response: null,
         isSidebarOpen: false,
-        loading: true
+        loading: true,
+        showBack: false,
+        title: 'Game Collection'
     };
 
     loadData = () => {
@@ -38,23 +41,44 @@ class App extends Component {
         });
     }
 
+    updateNav = (title) => {
+        this.setState({
+            showBack: true,
+            title: title
+        });
+    }
+
+    goBack = () => {
+        this.setState({
+            showBack: false,
+            title: 'Game Collection'
+        });
+        window.history.back();
+    }
+
     render() {
         return (
             <Router>
                 <div>
                     <AppBar position="static">
                         <Toolbar>
-                            <IconButton color="inherit" aria-label="Menu" onClick={this.toggleDrawer}>
-                                <Icons.Menu />
-                            </IconButton>
+                            {this.state.showBack ? (
+                                <IconButton color="inherit" aria-label="Menu" onClick={() => this.goBack()}>
+                                    <Icons.ArrowBack />
+                                </IconButton>
+                            ) : (
+                                <IconButton color="inherit" aria-label="Menu" onClick={this.toggleDrawer}>
+                                    <Icons.Menu />
+                                </IconButton>
+                            )}
                             <Typography variant="title" color="inherit">
-                                Game Collection
+                                {this.state.title}
                             </Typography>
                         </Toolbar>
                     </AppBar>
                     <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
 
-                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} loading={this.state.loading} />} />
+                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} loading={this.state.loading} updateNav={this.updateNav} />} />
                     <Route path="/contact" component={Contact} />
                 </div>
             </Router>
@@ -128,7 +152,7 @@ class Content extends Component {
         if (e.target.files && e.target.files[0]) {
             let reader = new FileReader();
             reader.onload = (e) => {
-                this.setState({image: e.target.result});
+                this.setState({ image: e.target.result });
             };
             reader.readAsDataURL(e.target.files[0]);
         }
@@ -137,9 +161,14 @@ class Content extends Component {
     render() {
         return (
             <div>
-                <Paper style={{ width: '80%', textAlign: 'center', margin: 'auto', overflowX: 'auto' }}>
-                    <GameTable data={this.props.data} handleRowClick={this.handleRowClick} handleDataChange={this.props.handleDataChange} handleOpenNotification={this.handleOpenNotification} loading={this.props.loading} />
-                </Paper>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <GameSlider data={this.props.data} updateNav={this.props.updateNav} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <GameTable data={this.props.data} handleRowClick={this.handleRowClick} handleDataChange={this.props.handleDataChange} handleOpenNotification={this.handleOpenNotification} loading={this.props.loading} />
+                    </Grid>
+                </Grid>
                 <GameDialog isEdit={this.state.isEdit} handleDataChange={this.props.handleDataChange} data={this.state} handleCloseDialog={this.handleCloseDialog} handleOpenDialog={this.handleOpenDialog} handleChange={this.handleChange} handleOpenNotification={this.handleOpenNotification} handleImageChange={this.handleImageChange} />
                 <Tooltip title="Add new game">
                     <Button variant="fab" color="primary" onClick={this.handleOpenDialog} aria-label="add" style={{ position: 'absolute', bottom: spacing.unit * 2, right: spacing.unit * 2 }}>
@@ -156,6 +185,51 @@ class Content extends Component {
     }
 }
 
+class GameSlider extends Component {
+    state = {
+        redirect: false,
+        id: ''
+    }
+
+    handleOnClick = (game_id, title) => {
+        this.setState({
+            redirect: true,
+            id: game_id
+        });
+        this.props.updateNav(title);
+    }
+
+    render() {
+        let settings = {
+            className: "center",
+            centerMode: true,
+            infinite: true,
+            slidesToShow: 3,
+            speed: 500,
+            autoplay: true
+        };
+        if(this.state.redirect) {
+            return <Redirect push to={"/game/" + this.state.id} />
+        }
+        return(
+            <Slider {...settings}>
+                {this.props.data && this.props.data.map(n => {
+                    return (
+                        <div key={n._id}>
+                            <Card className="coverContainer" onClick={() => this.handleOnClick(n._id, n.title)} >
+                                <CardMedia image={n.image} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
+                                <CardContent>
+                                    <Typography variant="subheading" align="center" noWrap>{n.title}</Typography>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    );
+                })
+                }
+            </Slider>
+        );
+    }
+}
 class GameTable extends Component {
     deleteRow = (e, id) => {
         fetch('/delete', {
@@ -183,7 +257,7 @@ class GameTable extends Component {
 
     render() {
         return (
-            <Table>
+            <Table id="gameTable">
                 <TableHead>
                     <TableRow>
                         <TableCell />
@@ -205,7 +279,7 @@ class GameTable extends Component {
                                         <IconButton onClick={this.handleClick} component="span">
                                             <Avatar src={n.image}>
                                                 {!n.image && (
-                                                    <Icons.PhotoCamera/>
+                                                    <Icons.PhotoCamera />
                                                 )}
                                             </Avatar>
                                         </IconButton>
@@ -227,7 +301,7 @@ class GameTable extends Component {
                             <TableCell colSpan={6} style={{ textAlign: 'center' }}>
                                 {this.props.loading ? (
                                     <CircularProgress />
-                                ) : 
+                                ) :
                                     'No data'
                                 }
                             </TableCell>
@@ -266,7 +340,7 @@ class GameDialog extends Component {
         return (
             <div>
                 <Dialog open={this.props.data.isOpen} onClose={this.props.handleCloseDialog} aria-labelledby="form-dialog-title">
-                    <Toolbar style={{backgroundColor: '#f7f7f7'}}>
+                    <Toolbar style={{ backgroundColor: '#f7f7f7' }}>
                         {this.props.isEdit && (
                             <div>
                                 <input type="file" accept="image/jpeg" id={"img-" + this.props.data._id} style={{ display: 'none' }} />

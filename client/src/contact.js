@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-function Contact() {
+function Contact(props) {
     return (
         <div id="contactContainer">
             <p>
