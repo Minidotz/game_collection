@@ -5,15 +5,14 @@ const Schema = mongoose.Schema;
 
 var GameSchema = new Schema({
     title: {type: String, unique: true, required: true},
-    company: String,
-    genre: String,
-    platform: String,
-    release_date: Date
+    guid: String,
+    inCollection: Boolean,
+    inWishlist: Boolean
 }, { toJSON: { virtuals: true } });
 
 GameSchema.virtual('image').get(function() {
-    if(fs.existsSync('client/public/img/games/img-' + this._id)) {
-        return 'img/games/img-' + this._id;
+    if(fs.existsSync('client/public/img/games/img-' + this.guid)) {
+        return 'img/games/img-' + this.guid;
     }
     else {
         return '';

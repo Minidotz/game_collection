@@ -1,14 +1,18 @@
 const express = require('express');
+require('dotenv').config();
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
+const API_KEY = process.env.API_KEY;
 const Moment = require('moment');
 const multer = require('multer');
+const request = require('request');
+const imgStoragePath = 'client/public/img/games/';
 
 let storage = multer.diskStorage({
-    destination: 'client/public/img/games/',
+    destination: imgStoragePath,
     filename: function (req, file, cb) {
         cb(null, req.body.id);
     }
@@ -22,6 +26,11 @@ app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 
 app.use(express.static('client/public'));
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.get('/games', (req, res) => {
     Game.find((err, games) => {
@@ -32,6 +41,35 @@ app.get('/games', (req, res) => {
             console.log(err);
         }
     });
+});
+
+app.get('/game/:gameId', (req, res) => {
+    request({
+        url: 'http://www.giantbomb.com/api/game/' + req.params.gameId,
+        headers: {
+            'User-Agent': 'myUseragent'
+        },
+        qs: {
+            format: 'json',
+            api_key: API_KEY
+        }
+    }).pipe(res);
+});
+
+app.get('/getSuggestions', (req, res) => {
+    request({
+        url: 'http://www.giantbomb.com/api/search',
+        headers: {
+            'User-Agent': 'myUseragent'
+        },
+        qs: {
+            format: 'json',
+            api_key: API_KEY,
+            query: req.query.search,
+            resources: 'game',
+            field_list: ['name','guid']
+        }
+    }).pipe(res);
 });
 
 app.get('/platforms', (req, res) => {
@@ -58,7 +96,7 @@ app.post('/add', (req, res) => {
                 //Strip off base64 part from the cover data
                 coverData = cover.replace(/^data:image\/\w+;base64,/, "");
                 let bufferedData = Buffer.from(coverData, 'base64');
-                fs.writeFileSync('client/public/img/games/img-' + g._id, bufferedData);
+                fs.writeFileSync(imgStoragePath + 'img-' + g._id, bufferedData);
             }
         }
     });
@@ -78,9 +116,9 @@ app.post('/delete', (req, res) => {
             console.log(err);
         }
         else {
-            if(fs.existsSync('client/public/img/games/img-' + id)) {
+            if(fs.existsSync(imgStoragePath + 'img-' + id)) {
                 //Delete cover image
-                fs.unlink('client/public/img/games/img-' + id, err => {
+                fs.unlink(imgStoragePath + 'img-' + id, err => {
                     if(err) {
                         console.log(err);
                     }
@@ -91,6 +129,31 @@ app.post('/delete', (req, res) => {
 });
 
 app.post('/upload', upload.single('img'), (req, res) => {
+});
+
+app.post('/add_to_collection', (req, res, next) => {
+    let data = req.body;
+    let game = new Game({
+        title: data.title,
+        guid: data.guid,
+        inCollection: true
+    });
+    game.save((err, g) => {
+        if(err) {
+            next(err);
+        }
+        else {
+            if(data.image && !fs.existsSync(imgStoragePath + 'img-' + g.guid)) {
+                request({
+                    url: data.image,
+                    headers: {
+                        'User-Agent': 'myUseragent'
+                    }
+                }).pipe(fs.createWriteStream(imgStoragePath + 'img-' + g.guid));
+            }
+            res.sendStatus(200);
+        }
+    });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
