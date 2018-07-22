@@ -15,8 +15,10 @@ export default class GamePage extends Component {
     componentDidMount() {
         fetch('/game/' + this.props.match.params.id)
         .then(res => res.json())
-        .then(res => this.setState({ gameData: res.results, loading: false }))
-        .catch(err => console.log(err));
+        .then(res => {
+            this.setState({ gameData: res.results, loading: false });
+            this.props.updateNav(res.results.name)
+        }).catch(err => console.log(err));
     }
 
     addToCollection = () => {

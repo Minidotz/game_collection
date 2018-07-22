@@ -61,7 +61,7 @@ class App extends Component {
                     <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} loading={this.state.loading} updateNav={this.updateNav} />} />
                     <Route path="/collection" component={CollectionPage} />
                     <Route path="/contact" component={Contact} />
-                    <Route path="/game/:id" component={GamePage} />
+                    <Route path="/game/:id" render={routeProps => <GamePage {...routeProps} updateNav={this.updateNav} />} />
                 </div>
             </Router>
         );

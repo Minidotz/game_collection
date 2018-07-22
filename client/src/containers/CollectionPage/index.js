@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Typography, Grid, Card, CardMedia, CardContent } from '@material-ui/core';
 import Slider from 'react-slick';
 import './main.css';
+import Redirect from 'react-router-dom/Redirect';
 
 export default class CollectionPage extends Component {
     state = {
@@ -47,12 +48,11 @@ class GameSlider extends Component {
         id: ''
     }
 
-    handleOnClick = () => {
-        // this.setState({
-        //     redirect: true,
-        //     id: game_id
-        // });
-        // this.props.updateNav(title);
+    handleOnClick = (game_id) => {
+        this.setState({
+            redirect: true,
+            id: game_id
+        });
     }
 
     render() {
@@ -65,12 +65,15 @@ class GameSlider extends Component {
             autoplay: true,
             arrows: false
         };
+        if(this.state.redirect) {
+            return <Redirect push to={"/game/" + this.state.id} />
+        }
         return (
             <Slider {...settings}>
                 {this.props.data && this.props.data.map(n => {
                     return (
                         <div key={n._id}>
-                            <Card className="coverContainer" onClick={() => this.handleOnClick(n._id, n.title)} >
+                            <Card className="coverContainer" onClick={() => this.handleOnClick(n.guid)} >
                                 <CardMedia image={n.image} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
                                 <CardContent>
                                     <Typography variant="subheading" align="center" noWrap>{n.title}</Typography>
