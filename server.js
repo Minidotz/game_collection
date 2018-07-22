@@ -14,7 +14,7 @@ const imgStoragePath = 'client/public/img/games/';
 let storage = multer.diskStorage({
     destination: imgStoragePath,
     filename: function (req, file, cb) {
-        cb(null, req.body.id);
+        cb(null, req.body.guid);
     }
 })
 const upload = multer({storage: storage});
@@ -52,8 +52,14 @@ app.get('/game/:gameId', (req, res) => {
         qs: {
             format: 'json',
             api_key: API_KEY
+        },
+        json: true
+    }, (e, r, json) => {
+        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
+            json.results.myImage = '../img/games/img-' + req.params.gameId;
         }
-    }).pipe(res);
+        res.json(json);
+    });
 });
 
 app.get('/getSuggestions', (req, res) => {

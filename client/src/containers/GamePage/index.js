@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar } from '@material-ui/core';
+import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, IconButton } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import PhotoIcon from '@material-ui/icons/Photo';
 
 export default class GamePage extends Component {
     state = {
@@ -56,6 +57,20 @@ export default class GamePage extends Component {
         });
     }
 
+    uploadPic = (e) => {
+        var data = new FormData();
+        data.append('guid', e.target.id);
+        data.append('img', e.target.files[0]);
+        fetch('/upload', {
+            method: 'POST',
+            body: data
+        });
+    }
+
+    handleClick = e => {
+        e.stopPropagation();
+    }
+
     render() {
         if(this.state.loading) {
             return (
@@ -68,7 +83,12 @@ export default class GamePage extends Component {
             <div>
                 <Grid container spacing={24}>
                     <Grid item sm={3} xs={12}>
-                        <img src={this.state.gameData.image.medium_url} alt="" width="100%" />
+                        <input type="file" accept="image/jpeg" id={"img-" + this.state.gameData.guid} style={{ display: 'none' }} onClick={this.handleClick} onChange={this.uploadPic} />
+                        <label htmlFor={"img-" + this.state.gameData.guid}>
+                            <ButtonBase component="span" onClick={this.handleClick}>
+                                <img src={this.state.gameData.myImage ? this.state.gameData.myImage : this.state.gameData.image.medium_url} alt="" width="100%" />
+                            </ButtonBase>
+                        </label>
                     </Grid>
                     <Grid item sm>
                         <Typography variant="title" gutterBottom>Summary</Typography>
