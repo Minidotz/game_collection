@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, IconButton } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import PhotoIcon from '@material-ui/icons/Photo';
+import GameInfo from '../../components/GameInfo';
 
+const overviewPattern = /(?:<[^Overview<\/h2>])(.*?)(?=<h2|$)/;
 export default class GamePage extends Component {
     state = {
         loading: true,
@@ -82,7 +84,7 @@ export default class GamePage extends Component {
             );
         }
         return (
-            <div>
+            <div className="content">
                 <Grid container spacing={24}>
                     <Grid item sm={3} xs={12}>
                         <input type="file" accept="image/jpeg" id={"img-" + this.state.gameData.guid} style={{ display: 'none' }} onClick={this.handleClick} onChange={this.uploadPic} />
@@ -94,13 +96,16 @@ export default class GamePage extends Component {
                     </Grid>
                     <Grid item sm>
                         <Typography variant="title" gutterBottom>Summary</Typography>
-                        <Typography variant="body1">{this.state.gameData.deck}</Typography>
+                        <Typography>{this.state.gameData.deck}</Typography>
+                    </Grid>
+                    <Grid item sm>
+                        <GameInfo data={this.state.gameData} />
                     </Grid>
                 </Grid>
                 <Grid container spacing={24}>
                     <Grid item xs>
-                        <Typography dangerouslySetInnerHTML={{__html: this.state.gameData.description}} style={{overflowX: 'hidden'}} >
-                        </Typography>
+                        <Typography variant="title" gutterBottom>Overview</Typography>
+                        <Typography dangerouslySetInnerHTML={{__html: overviewPattern.exec(this.state.gameData.description)[0]}} style={{overflowX: 'hidden'}} />
                     </Grid>
                 </Grid>
                 <Tooltip title="Add to Collection">
