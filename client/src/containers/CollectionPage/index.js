@@ -30,7 +30,7 @@ export default class CollectionPage extends Component {
 
     render() {
         return (
-            <div id="content">
+            <div className="content">
                 <Typography variant="headline" gutterBottom>My Collection</Typography>
                 <Grid container>
                     <Grid item xs={12}>

@@ -70,7 +70,7 @@ class App extends Component {
 
 function Content(props) {
     return (
-        <div>
+        <div className="content">
             <Grid container>
                 <Grid container justify="center" >
                     <Grid item xs={12} sm={9}>
