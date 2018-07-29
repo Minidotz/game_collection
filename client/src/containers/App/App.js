@@ -40,7 +40,7 @@ class App extends Component {
         return (
             <Router>
                 <div>
-                    <AppBar position="static" style={{marginBottom: '1em'}} >
+                    <AppBar>
                         <Toolbar>
                             {this.state.showBack ? (
                                 <IconButton color="inherit" aria-label="Menu" onClick={() => this.goBack()}>
