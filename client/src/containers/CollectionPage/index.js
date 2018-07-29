@@ -63,7 +63,8 @@ class GameSlider extends Component {
             slidesToShow: 3,
             speed: 500,
             autoplay: true,
-            arrows: false
+            arrows: false,
+            swipeToSlide: true
         };
         if(this.state.redirect) {
             return <Redirect push to={"/game/" + this.state.id} />
