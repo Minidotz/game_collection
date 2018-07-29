@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('/games', (req, res) => {
-    Game.find((err, games) => {
+    Game.find({ inCollection: true }, (err, games) => {
         if (!err) {
             res.json(games);
         }
@@ -76,6 +76,17 @@ app.get('/getSuggestions', (req, res) => {
             field_list: ['name','guid']
         }
     }).pipe(res);
+});
+
+app.get('/inCollection/:gameId', (req, res) => {
+    Game.findOne({ guid: req.params.gameId, inCollection: true }, (err, g) => {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            g && res.json(g);
+        }
+    });
 });
 
 app.get('/platforms', (req, res) => {
@@ -139,12 +150,12 @@ app.post('/upload', upload.single('img'), (req, res) => {
 
 app.post('/add_to_collection', (req, res, next) => {
     let data = req.body;
-    let game = new Game({
+    let game = {
         title: data.title,
         guid: data.guid,
         inCollection: true
-    });
-    game.save((err, g) => {
+    };
+    Game.findOneAndUpdate({guid: data.guid}, game, {upsert: true, new: true}, (err, g) => {
         if(err) {
             next(err);
         }
@@ -157,6 +168,17 @@ app.post('/add_to_collection', (req, res, next) => {
                     }
                 }).pipe(fs.createWriteStream(imgStoragePath + 'img-' + g.guid));
             }
+            res.sendStatus(200);
+        }
+    });
+});
+
+app.post('/removeFromCollection', (req, res) => {
+    Game.findOneAndUpdate({ guid: req.body.guid, inCollection: true }, { inCollection: false }, (err, g) => {
+        if(err) {
+            console.log(err)
+        }
+        else {
             res.sendStatus(200);
         }
     });
