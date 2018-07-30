@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { Typography, Grid, Card, CardMedia, CardContent } from '@material-ui/core';
+import { Typography, Grid, Card, CardMedia, CardContent, Button } from '@material-ui/core';
 import Slider from 'react-slick';
 import './main.css';
 import Redirect from 'react-router-dom/Redirect';
+import SearchDialog from '../../components/SearchDialog';
+import SearchIcon from '@material-ui/icons/Search';
 
 export default class CollectionPage extends Component {
     state = {
         response: null,
         loading: true,
+        search: false
     };
 
     loadData = () => {
@@ -28,6 +31,14 @@ export default class CollectionPage extends Component {
         return body;
     }
 
+    openSearch = () => {
+        this.setState({search: true});
+    }
+
+    closeSearch = () => {
+        this.setState({search: false});
+    }
+
     render() {
         return (
             <div className="content">
@@ -37,6 +48,10 @@ export default class CollectionPage extends Component {
                         <GameSlider data={this.state.response} updateNav={this.props.updateNav} />
                     </Grid>
                 </Grid>
+                <SearchDialog search={this.state.search} closeSearch={this.closeSearch} />
+                <Button variant="fab" color="primary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                    <SearchIcon />
+                </Button>
             </div>
         );
     }
@@ -60,7 +75,23 @@ class GameSlider extends Component {
             className: "center",
             centerMode: true,
             infinite: true,
-            slidesToShow: 3,
+            slidesToShow: 5,
+            responsive: [
+                {
+                  breakpoint: 1024,
+                  settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3
+                  }
+                },
+                {
+                  breakpoint: 600,
+                  settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                  }
+                }
+            ],
             speed: 500,
             autoplay: true,
             arrows: false,

@@ -62,7 +62,6 @@ export default class GameSearch extends Component {
                 redirect: true,
                 gameId: suggestion.guid
             });
-            this.props.updateNav(suggestionValue);
         }
     }
 
