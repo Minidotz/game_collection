@@ -49,7 +49,7 @@ export default class CollectionPage extends Component {
                     </Grid>
                 </Grid>
                 <SearchDialog search={this.state.search} closeSearch={this.closeSearch} />
-                <Button variant="fab" color="primary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                <Button variant="fab" color="secondary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
                     <SearchIcon />
                 </Button>
             </div>
