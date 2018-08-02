@@ -7,12 +7,12 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 function SearchDialog(props) {
     return (
         <Dialog open={props.search} onClose={props.closeSearch} fullWidth fullScreen={props.fullScreen} >
-            <Toolbar style={{justifyContent: 'flex-end'}}>
+            <Toolbar disableGutters style={{justifyContent: 'flex-end'}}>
                 <IconButton color="inherit" onClick={props.closeSearch} aria-label="Close" >
                     <CloseIcon />
                 </IconButton>
             </Toolbar>
-            <DialogContent>
+            <DialogContent style={{paddingTop: '5px'}}>
                 <GameSearch />
             </DialogContent>
         </Dialog>

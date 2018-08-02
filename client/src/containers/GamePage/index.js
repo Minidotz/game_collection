@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, IconButton, Paper, Tabs, Tab, Zoom } from '@material-ui/core';
+import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom } from '@material-ui/core';
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@material-ui/icons';
-import PhotoIcon from '@material-ui/icons/Photo';
 import GameInfo from '../../components/GameInfo';
 
 const overviewPattern = /(?:<[^Overview</h2>])(.*?)(?=<h2|$)/;

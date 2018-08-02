@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, Grid, ListItemIcon, Divider } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, IconButton } from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import './App.css';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import MainPage from '../MainPage';
 import Contact from '../Contact';
-import GameSearch from '../../components/GameSearch';
 import GamePage from '../GamePage';
 import CollectionPage from '../CollectionPage';
+import Sidebar from '../../components/Sidebar';
 
 class App extends Component {
     state = {
@@ -58,7 +59,7 @@ class App extends Component {
                     </AppBar>
                     <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
 
-                    <Route exact path="/" render={() => <Content data={this.state.response} handleDataChange={this.loadData} loading={this.state.loading} updateNav={this.updateNav} />} />
+                    <Route exact path="/" component={MainPage} />
                     <Route path="/collection" component={CollectionPage} />
                     <Route path="/contact" component={Contact} />
                     <Route path="/game/:id" render={routeProps => <GamePage {...routeProps} updateNav={this.updateNav} />} />
@@ -66,53 +67,6 @@ class App extends Component {
             </Router>
         );
     }
-}
-
-function Content(props) {
-    return (
-        <div className="content">
-            <Grid container>
-                <Grid container justify="center" >
-                    <Grid item xs={12} sm={9}>
-                        <GameSearch updateNav={props.updateNav} />
-                    </Grid>
-                </Grid>
-            </Grid>
-        </div>
-    );
-}
-
-
-
-function Sidebar(props) {
-    return (
-        <Drawer open={props.isOpen} onClose={props.onClose}>
-            <List style={{ width: 250 }}>
-                <ListItem>
-                    <ListItemText primary="Game Collection" />
-                </ListItem>
-                <Divider />
-                <ListItem button component={Link} to="/">
-                    <ListItemIcon>
-                        <Icons.Home />
-                    </ListItemIcon>
-                    <ListItemText primary="Home" />
-                </ListItem>
-                <ListItem button component={Link} to="/collection">
-                    <ListItemIcon>
-                        <Icons.VideogameAsset />
-                    </ListItemIcon>
-                    <ListItemText primary="My Collection" />
-                </ListItem>
-                <ListItem button component={Link} to="/contact">
-                    <ListItemIcon>
-                        <Icons.Mail />
-                    </ListItemIcon>
-                    <ListItemText primary="Contact" />
-                </ListItem>
-            </List>
-        </Drawer>
-    );
 }
 
 export default App;

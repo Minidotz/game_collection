@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Typography, Grid, Card, CardMedia, CardContent, CardHeader, Chip } from '@material-ui/core';
+import React from 'react';
+import { Typography, Grid, Card, CardContent, CardHeader, Chip } from '@material-ui/core';
 import moment from 'moment';
 
 export default function GameInfo(props) {
