@@ -136,7 +136,7 @@ class GamePage extends PureComponent {
                     </Grid>
                     <Grid item sm={8} xs={12}>
                         <Grid container>
-                            <Grid item>
+                            <Grid item xs={12}>
                                 <Paper square>
                                     <Tabs value={this.state.tabValue} indicatorColor="primary" >
                                         <Tab label="Overview" />
@@ -144,7 +144,11 @@ class GamePage extends PureComponent {
                                 </Paper>
                                 {this.state.tabValue === 0 && (
                                     <Paper square>
-                                        <Typography dangerouslySetInnerHTML={{ __html: overviewPattern.exec(this.state.gameData.description)[0].replace(/style=".*?(?:")/g, "") }} style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                        {this.state.gameData.description ? (
+                                            <Typography dangerouslySetInnerHTML={{ __html: overviewPattern.exec(this.state.gameData.description)[0].replace(/style=".*?(?:")/g, "") }} style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                        ) : (
+                                            <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                        )}
                                     </Paper>
                                 )}
                             </Grid>

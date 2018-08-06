@@ -58,10 +58,21 @@ export default class GameSearch extends Component {
 
     onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
         if(suggestionValue !== 'Loading...') {
-            this.setState({
-                redirect: true,
-                gameId: suggestion.guid
-            });
+            fetch('/searches', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: suggestion.name,
+                    guid: suggestion.guid
+                }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+                if(res.ok) {
+                    this.setState({
+                        redirect: true,
+                        gameId: suggestion.guid
+                    });
+                }
+            }).catch(err => console.log(err));
         }
     }
 
@@ -107,7 +118,7 @@ export default class GameSearch extends Component {
             container: {
                 flexGrow: 1,
                 position: 'relative',
-                height: 250
+                height: 100
             },
             suggestionsContainerOpen: {
                 position: 'absolute',

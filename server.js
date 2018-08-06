@@ -21,6 +21,7 @@ const upload = multer({storage: storage});
 
 mongoose.connect('mongodb://localhost/games');
 let Game = require('./models/game');
+let Search = require('./models/search');
 
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
@@ -85,6 +86,17 @@ app.get('/inCollection/:gameId', (req, res) => {
         }
         else {
             g && res.json(g);
+        }
+    });
+});
+
+app.get('/searches', (req, res) => {
+    Search.find({}, (err, searches) => {
+        if (!err) {
+            res.json(searches);
+        }
+        else {
+            console.log(err);
         }
     });
 });
@@ -155,7 +167,7 @@ app.post('/add_to_collection', (req, res, next) => {
         guid: data.guid,
         inCollection: true
     };
-    Game.findOneAndUpdate({guid: data.guid}, game, {upsert: true, new: true}, (err, g) => {
+    Game.findOneAndUpdate({guid: data.guid}, game, {upsert: true, new: true, setDefaultsOnInsert: true}, (err, g) => {
         if(err) {
             next(err);
         }
@@ -177,6 +189,22 @@ app.post('/removeFromCollection', (req, res) => {
     Game.findOneAndUpdate({ guid: req.body.guid, inCollection: true }, { inCollection: false }, (err, g) => {
         if(err) {
             console.log(err)
+        }
+        else {
+            res.sendStatus(200);
+        }
+    });
+});
+
+app.post('/searches', (req, res, next) => {
+    let data = req.body;
+    let search = {
+        title: data.title,
+        guid: data.guid
+    }
+    Search.findOneAndUpdate({guid: data.guid}, search, {upsert: true, new: true, setDefaultsOnInsert: true}, (err, g) => {
+        if(err) {
+            next(err);
         }
         else {
             res.sendStatus(200);
