@@ -6,6 +6,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
+const DB_NAME = process.env.DB_NAME;
 const Moment = require('moment');
 const multer = require('multer');
 const request = require('request');
@@ -19,7 +20,7 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-mongoose.connect('mongodb://localhost/games');
+mongoose.connect('mongodb://localhost/' + DB_NAME);
 let Game = require('./models/game');
 let Search = require('./models/search');
 
