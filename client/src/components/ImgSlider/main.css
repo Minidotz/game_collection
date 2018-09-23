@@ -1,0 +1,20 @@
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+.imgSlider .slick-slide {
+    margin: 5px;
+}
+
+.imgSlider .slick-slide img {
+    max-height: 50vh;
+}
+
+.slick-arrow:before {
+    opacity: 0.25;
+    color: black;
+}
+
+.slick-arrow:hover, .slick-arrow:focus {
+    opacity: 0.75;
+    color: black;
+}

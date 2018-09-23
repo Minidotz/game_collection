@@ -64,6 +64,28 @@ app.get('/game/:gameId', (req, res) => {
     });
 });
 
+app.get('/game/screenshots/:gameId', (req, res) => {
+    request({
+        url: 'http://www.giantbomb.com/api/images/' + req.params.gameId,
+        headers: {
+            'User-Agent': 'myUseragent'
+        },
+        qs: {
+            format: 'json',
+            filter: {
+                image_tag: 'Screenshots'
+            },
+            api_key: API_KEY
+        },
+        json: true
+    }, (e, r, json) => {
+        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
+            json.results.myImage = '../img/games/img-' + req.params.gameId;
+        }
+        res.json(json);
+    });
+});
+
 app.get('/getSuggestions', (req, res) => {
     request({
         url: 'http://www.giantbomb.com/api/search',

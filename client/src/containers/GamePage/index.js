@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom } from '@material-ui/core';
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import GameInfo from '../../components/GameInfo';
+import ImgSlider from '../../components/ImgSlider';
 
 const overviewPattern = /(?:<[^Overview</h2>])(.*?)(?=<h2|$)/;
 class GamePage extends PureComponent {
@@ -13,7 +14,8 @@ class GamePage extends PureComponent {
             notifMessage: ''
         },
         inCollection: false,
-        tabValue: 0
+        tabValue: 0,
+        screenshots: null
     }
 
     inCollection = (guid) => {
@@ -34,6 +36,11 @@ class GamePage extends PureComponent {
             .then(res => {
                 this.setState({ gameData: res.results, loading: false });
                 this.props.updateNav(res.results.name)
+            }).catch(err => console.log(err));
+        fetch('/game/screenshots/' + this.props.match.params.id)
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ screenshots: res.results });
             }).catch(err => console.log(err));
     }
 
@@ -108,6 +115,10 @@ class GamePage extends PureComponent {
         e.stopPropagation();
     }
 
+    handleTabChange = (e, value) => {
+        this.setState({ tabValue: value });
+    }
+
     render() {
         if (this.state.loading) {
             return (
@@ -138,8 +149,9 @@ class GamePage extends PureComponent {
                         <Grid container>
                             <Grid item xs={12}>
                                 <Paper square>
-                                    <Tabs value={this.state.tabValue} indicatorColor="primary" >
+                                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange} indicatorColor="primary" >
                                         <Tab label="Overview" />
+                                        <Tab label="Images" />
                                     </Tabs>
                                 </Paper>
                                 {this.state.tabValue === 0 && (
@@ -147,8 +159,13 @@ class GamePage extends PureComponent {
                                         {this.state.gameData.description ? (
                                             <Typography dangerouslySetInnerHTML={{ __html: overviewPattern.exec(this.state.gameData.description)[0].replace(/style=".*?(?:")/g, "") }} style={{ overflowX: 'hidden', padding: '0.5em' }} />
                                         ) : (
-                                            <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
-                                        )}
+                                                <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                            )}
+                                    </Paper>
+                                )}
+                                {this.state.tabValue === 1 && (
+                                    <Paper square style={{padding: '2em'}}>
+                                        <ImgSlider images={this.state.screenshots} limit={10} />
                                     </Paper>
                                 )}
                             </Grid>
