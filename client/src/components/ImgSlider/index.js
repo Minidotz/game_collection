@@ -5,7 +5,7 @@ import Slider from 'react-slick';
 export default function ImgSlider(props) {
     let settings = {
         className: 'imgSlider',
-        infinite: true,
+        infinite: false,
         arrows: true,
         swipeToSlide: true,
         variableWidth: true,
