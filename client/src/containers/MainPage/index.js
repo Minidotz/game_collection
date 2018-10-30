@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Grid, CircularProgress } from '@material-ui/core';
 import GameSearch from '../../components/GameSearch';
 import RecentItems from '../../components/RecentItems';
+import Releases from '../../components/Releases';
 
 export default class MainPage extends Component {
     state = {
         gamesAdded: [],
         searches: [],
+        platforms: [],
         loading: true
     }
 
@@ -26,8 +28,14 @@ export default class MainPage extends Component {
             ).catch(err => console.log(err));
     }
 
+    getPlatforms = async () => {
+        const res = await fetch('/platforms');
+        const platforms = await res.json();
+        this.setState({ platforms: platforms });
+    }
+
     componentDidMount() {
-        Promise.all([this.getGames(), this.getSearches()]).then(res =>
+        Promise.all([this.getGames(), this.getSearches(), this.getPlatforms()]).then(res =>
             this.setState({ loading: false })
         );
     }
@@ -53,6 +61,9 @@ export default class MainPage extends Component {
                     </Grid>
                     <Grid item xs={12} sm>
                         <RecentItems data={this.state.searches} unit="searches" title="Recently Searched" />
+                    </Grid>
+                    <Grid item xs={12} sm>
+                        <Releases title="New Releases" platforms={this.state.platforms} />
                     </Grid>
                 </Grid>
             </div>

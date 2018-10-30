@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
 const DB_NAME = process.env.DB_NAME;
-const Moment = require('moment');
+const moment = require('moment');
 const multer = require('multer');
 const request = require('request');
 const imgStoragePath = 'client/public/img/games/';
@@ -20,7 +20,7 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-mongoose.connect('mongodb://localhost/' + DB_NAME);
+mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true });
 let Game = require('./models/game');
 let Search = require('./models/search');
 
@@ -72,9 +72,6 @@ app.get('/game/screenshots/:gameId', (req, res) => {
         },
         qs: {
             format: 'json',
-            filter: {
-                image_tag: 'Screenshots'
-            },
             api_key: API_KEY
         },
         json: true
@@ -97,7 +94,7 @@ app.get('/getSuggestions', (req, res) => {
             api_key: API_KEY,
             query: req.query.search,
             resources: 'game',
-            field_list: ['name','guid']
+            field_list: 'name,guid'
         }
     }).pipe(res);
 });
@@ -125,8 +122,54 @@ app.get('/searches', (req, res) => {
 });
 
 app.get('/platforms', (req, res) => {
-    let platforms = ['PC', 'Mac', 'PS4', 'PS3', 'Xbox One', 'Switch', 'Wii U', 'Vita', 'Xbox 360', '3DS'];
+    let platforms = [{
+        name: 'PC',
+        id: 94
+    },{
+        name: 'MAC',
+        id: 17
+    },{
+        name: 'PS4',
+        id: 146
+    },{
+        name: 'PS3',
+        id: 35
+    },{
+        name: 'Xbox 360',
+        id: 20
+    },{
+        name: 'Xbox One',
+        id: 145
+    },{
+        name: 'Switch',
+        id: 157
+    },{
+        name: '3DS',
+        id: 117
+    },{
+        name: 'Wii U',
+        id: 139
+    }];
     res.json(platforms);
+});
+
+app.get('/releases/:platformId', (req, res) => {
+    const limit = req.query.limit || 100;
+    request({
+        url: 'http://www.giantbomb.com/api/releases',
+        headers: {
+            'User-Agent': 'myUseragent'
+        },
+        qs: {
+            api_key: API_KEY,
+            limit: limit,
+            format: 'json',
+            sort: 'release_date:desc',
+            field_list: 'game,name,image,platform',
+            filter: `release_date:${moment().subtract(30, 'days').format('Y-MM-DD')}|${moment().format('Y-MM-DD')},region:1,platform:${req.params.platformId}`
+        },
+        json: true
+    }).pipe(res);    
 });
 
 app.post('/add', (req, res) => {
