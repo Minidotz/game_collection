@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Paper, List, ListItem, ListItemText, Toolbar, Typography, Select, MenuItem, Avatar, CircularProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import GameList from '../GameList';
 
 export default class Releases extends Component {
     state = {
@@ -51,22 +52,7 @@ export default class Releases extends Component {
                     </div>
                 )}
                 {!this.state.loading && (
-                    <List>
-                        {this.state.releases.length > 0 ? (
-                            this.state.releases.map(d => {
-                                return (
-                                    <ListItem key={d.guid} button component={Link} to={`/game/3030-${d.game.id}`} >
-                                        <Avatar alt={d.name} src={d.image.icon_url} />
-                                        <ListItemText primary={d.name} />
-                                    </ListItem>
-                                )
-                            })
-                        ) : (
-                            <ListItem>
-                                <ListItemText primary={<em>No data</em>} />
-                            </ListItem>
-                        )}
-                    </List>
+                    <GameList data={this.state.releases} />
                 )}
             </Paper>
         )

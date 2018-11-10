@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Paper, List, ListItem, ListItemText, Toolbar, Typography, Select, MenuItem, Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import GameList from '../GameList';
 
 export default class RecentItems extends Component {
     state = {
@@ -29,24 +30,7 @@ export default class RecentItems extends Component {
                         <Typography>{this.props.unit}</Typography>
                     </div>
                 </Toolbar>
-                {this.props.data.length > 0 ? (
-                    <List>
-                        {this.props.data.sort((a, b) => new Date(b.createDate) - new Date(a.createDate)).slice(0, this.state.limit).map(d => {
-                            return (
-                                <ListItem key={d._id} button component={Link} to={'/game/' + d.guid} >
-                                    <Avatar alt={d.title} src={d.image} />
-                                    <ListItemText primary={d.title} />
-                                </ListItem>
-                            )
-                        })}
-                    </List>
-                ) : (
-                    <List>
-                        <ListItem>
-                            <ListItemText primary={<em>No data</em>} />
-                        </ListItem>
-                    </List>
-                )}
+                <GameList data={this.props.data.sort((a, b) => new Date(b.createDate) - new Date(a.createDate)).slice(0, this.state.limit)} />
             </Paper>
         );
     }

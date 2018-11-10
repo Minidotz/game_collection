@@ -165,11 +165,22 @@ app.get('/releases/:platformId', (req, res) => {
             limit: limit,
             format: 'json',
             sort: 'release_date:desc',
-            field_list: 'game,name,image,platform',
+            field_list: 'id,game,name,image,platform',
             filter: `release_date:${moment().subtract(30, 'days').format('Y-MM-DD')}|${moment().format('Y-MM-DD')},region:1,platform:${req.params.platformId}`
         },
         json: true
-    }).pipe(res);    
+    }, (e, r, json) => {
+        let formatted = {
+            results: json.results.map(item => ({
+                _id: item.guid,
+                guid: `3030-${item.game.id}`,
+                title: item.name,
+                image: item.image.icon_url,
+                platform: item.platform
+            }))
+        };
+        res.json(formatted);
+    });
 });
 
 app.post('/add', (req, res) => {
