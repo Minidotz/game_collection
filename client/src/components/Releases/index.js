@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, List, ListItem, ListItemText, Toolbar, Typography, Select, MenuItem, Avatar, CircularProgress } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Paper, Toolbar, Typography, Select, MenuItem, CircularProgress } from '@material-ui/core';
 import GameList from '../GameList';
 
 export default class Releases extends Component {
