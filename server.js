@@ -20,7 +20,15 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true }, (err) =>{
+    if(err) {
+        console.error('Unable to connect to MongoDB server. Error:', err.stack);
+        process.exit(1);
+    }
+    else {
+        console.log('Connected to MongoDB server successfully!');
+    }
+});
 let Game = require('./models/game');
 let Search = require('./models/search');
 
