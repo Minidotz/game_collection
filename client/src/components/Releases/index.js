@@ -23,7 +23,10 @@ export default class Releases extends Component {
         fetch(`/releases/${platformId}?limit=10`)
             .then(res => res.json())
             .then(json => { this.setState({ releases: json.results, loading: false }) })
-            .catch(err => console.log(err));
+            .catch(err => { 
+                console.log(err);
+                this.setState({loading: false});
+            });
     }
 
     render() {

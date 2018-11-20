@@ -29,9 +29,13 @@ export default class MainPage extends Component {
     }
 
     getPlatforms = async () => {
-        const res = await fetch('/platforms');
-        const platforms = await res.json();
-        this.setState({ platforms: platforms });
+        try {
+            const res = await fetch('/platforms');
+            const platforms = await res.json();
+            this.setState({ platforms: platforms });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     componentDidMount() {
