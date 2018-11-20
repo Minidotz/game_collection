@@ -20,7 +20,7 @@ To run the app locally:
 ```bash
 git clone https://github.com/Minidotz/game_collection.git
 cd game_collection
-npm install
+npm run install-deps
 npm run dev
 ```
 
