@@ -52,7 +52,7 @@ class App extends Component {
                                         <Icons.Menu />
                                     </IconButton>
                                 )}
-                            <Typography variant="title" color="inherit">
+                            <Typography variant="h6" color="inherit">
                                 {this.state.title}
                             </Typography>
                         </Toolbar>

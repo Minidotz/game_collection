@@ -14,7 +14,7 @@ export default class RecentItems extends Component {
             <Paper square>
                 <Toolbar style={{backgroundColor: '#f7f7f7'}}>
                     <div>
-                        <Typography variant="title">
+                        <Typography variant="h6">
                             {this.props.title}
                         </Typography>
                     </div>

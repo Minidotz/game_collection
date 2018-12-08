@@ -13,6 +13,9 @@ const theme = createMuiTheme({
         secondary: {
             main: '#E85F50',
         }
+    },
+    typography: {
+        useNextVariants: true
     }
 });
 function MyApp() {
