@@ -4,7 +4,7 @@ import GameList from '../GameList';
 
 export default class RecentItems extends Component {
     state = {
-        limit: this.props.limit || 10
+        limit: this.props.limit || 5
     }
     handleChange = e => {
         this.setState({ limit: e.target.value });
