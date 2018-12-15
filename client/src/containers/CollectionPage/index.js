@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Typography, Grid, Card, CardMedia, CardContent, Button } from '@material-ui/core';
+import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@material-ui/core';
 import Slider from 'react-slick';
 import './main.css';
 import Redirect from 'react-router-dom/Redirect';
@@ -42,16 +42,16 @@ export default class CollectionPage extends Component {
     render() {
         return (
             <div className="content">
-                <Typography variant="headline" gutterBottom>My Collection</Typography>
+                <Typography variant="h5" gutterBottom>My Collection</Typography>
                 <Grid container>
                     <Grid item xs={12}>
                         <GameSlider data={this.state.response} updateNav={this.props.updateNav} />
                     </Grid>
                 </Grid>
                 <SearchDialog search={this.state.search} closeSearch={this.closeSearch} />
-                <Button variant="fab" color="secondary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                <Fab color="secondary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
                     <SearchIcon />
-                </Button>
+                </Fab>
             </div>
         );
     }
@@ -108,7 +108,7 @@ class GameSlider extends Component {
                             <Card className="coverContainer" onClick={() => this.handleOnClick(n.guid)} >
                                 <CardMedia image={n.image} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
                                 <CardContent>
-                                    <Typography variant="subheading" align="center" noWrap>{n.title}</Typography>
+                                    <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>
                                 </CardContent>
                             </Card>
                         </div>

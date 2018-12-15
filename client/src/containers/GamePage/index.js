@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom } from '@material-ui/core';
+import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@material-ui/core';
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import GameInfo from '../../components/GameInfo';
 import ImgSlider from '../../components/ImgSlider';
@@ -174,16 +174,16 @@ class GamePage extends PureComponent {
                 </Grid>
                 <Tooltip title="Remove from Collection">
                     <Zoom in={this.state.inCollection} >
-                        <Button variant="fab" color="secondary" onClick={this.removeFromCollection} aria-label="remove" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                        <Fab color="secondary" onClick={this.removeFromCollection} aria-label="remove" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
                             <DeleteIcon />
-                        </Button>
+                        </Fab>
                     </Zoom>
                 </Tooltip>
                 <Tooltip title="Add to Collection">
                     <Zoom in={!this.state.inCollection}>
-                        <Button variant="fab" color="primary" onClick={this.addToCollection} aria-label="add" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                        <Fab color="primary" onClick={this.addToCollection} aria-label="add" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
                             <FavoriteIcon />
-                        </Button>
+                        </Fab>
                     </Zoom>
                 </Tooltip>
                 <Snackbar open={this.state.notification.isNotifOpen} message={this.state.notification.notifMessage} autoHideDuration={2000} onClose={this.handleCloseNotification} action={
