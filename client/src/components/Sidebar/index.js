@@ -3,13 +3,15 @@ import { Drawer, List, ListItem, ListItemText, ListItemIcon } from '@material-ui
 import { Home as HomeIcon, VideogameAsset as VideogameAssetIcon, Mail as MailIcon } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import './main.css';
 
 const styles = theme => ({
     listItem: {
-        '&:hover': {
+        '&.active': {
             backgroundColor: theme.palette.primary.main
         },
+        '&:hover': {
+            backgroundColor: theme.palette.secondary.main
+        }
     },
     primary: {}
 });
@@ -19,6 +21,9 @@ function Sidebar(props) {
         <Drawer open={props.isOpen} onClose={props.onClose}>
             <List component="nav" style={{ width: 250 }}>
                 <ListItem divider>
+                    <ListItemIcon>
+                        <img src="favicon.ico" width="32" height="32" alt="" />
+                    </ListItemIcon>
                     <ListItemText primary="Game Collection" />
                 </ListItem>
                 <ListItem button className={props.classes.listItem} component={NavLink} to="/" exact>
