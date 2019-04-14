@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { AppBar, Toolbar, Typography, IconButton } from '@material-ui/core';
-import * as Icons from '@material-ui/icons';
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import MainPage from '../MainPage';
@@ -8,6 +6,7 @@ import Contact from '../Contact';
 import GamePage from '../GamePage';
 import CollectionPage from '../CollectionPage';
 import Sidebar from '../../components/Sidebar';
+import Navbar from '../Navbar';
 
 class App extends Component {
     state = {
@@ -41,7 +40,8 @@ class App extends Component {
         return (
             <Router>
                 <div>
-                    <AppBar>
+                    <Navbar showBack={this.state.showBack} title={this.state.title} goBack={this.goBack} toggleDrawer={this.toggleDrawer} />
+                    {/* <AppBar>
                         <Toolbar>
                             {this.state.showBack ? (
                                 <IconButton color="inherit" aria-label="Menu" onClick={() => this.goBack()}>
@@ -52,11 +52,17 @@ class App extends Component {
                                         <Icons.Menu />
                                     </IconButton>
                                 )}
-                            <Typography variant="h6" color="inherit">
+                            <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
                                 {this.state.title}
                             </Typography>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Button disableRipple>
+                                    <Avatar style={{ backgroundColor: '#b02d27' }}>SP</Avatar>
+                                    <Typography variant="subheading" color="inherit" style={{ paddingLeft: '0.5em', textTransform: "none" }}>Stratos</Typography>
+                                </Button>
+                            </div>
                         </Toolbar>
-                    </AppBar>
+                    </AppBar> */}
                     <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
 
                     <Route exact path="/" component={MainPage} />
