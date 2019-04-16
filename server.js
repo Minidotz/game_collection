@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 require('dotenv').config();
 const app = express();
 const bodyParser = require('body-parser');
@@ -35,12 +36,16 @@ let Search = require('./models/search');
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 
-app.use(express.static('client/public'));
+app.use(express.static(path.join(__dirname, 'client', 'public')));
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+// app.use(express.static(path.join(__dirname, 'client', 'build')));
+// app.get('/', function (req, res) {
+//     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+//   });
 
 app.get('/games', (req, res) => {
     Game.find({ inCollection: true }, (err, games) => {

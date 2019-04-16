@@ -1,6 +1,8 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Avatar } from '@material-ui/core';
-import { ArrowBack, Menu as MenuIcon} from '@material-ui/icons';
+import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
+import { ArrowBack, Menu as MenuIcon } from '@material-ui/icons';
+import UserNavbarItem from '../../components/UserNavbarItem';
+
 
 const Navbar = ({ title, showBack, goBack, toggleDrawer }) => {
     return (
@@ -16,12 +18,7 @@ const Navbar = ({ title, showBack, goBack, toggleDrawer }) => {
                 <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
                     {title}
                 </Typography>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Button disableRipple>
-                        <Avatar style={{ backgroundColor: '#b02d27' }}>SP</Avatar>
-                        <Typography variant="subtitle2" color="inherit" style={{ paddingLeft: '0.5em', textTransform: "none" }}>Stratos</Typography>
-                    </Button>
-                </div>
+                <UserNavbarItem />
             </Toolbar>
         </AppBar>
     )

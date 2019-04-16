@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@material-ui/core';
 import Slider from 'react-slick';
 import './main.css';
-import Redirect from 'react-router-dom/Redirect';
+import { Redirect } from 'react-router-dom';
 import SearchDialog from '../../components/SearchDialog';
 import SearchIcon from '@material-ui/icons/Search';
 
