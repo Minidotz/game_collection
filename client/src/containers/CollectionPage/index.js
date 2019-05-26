@@ -63,10 +63,11 @@ class GameSlider extends Component {
         id: ''
     }
 
-    handleOnClick = (game_id) => {
+    handleOnClick = (game_id, title) => {
         this.setState({
             redirect: true,
-            id: game_id
+            id: game_id,
+            title: title
         });
     }
 
@@ -98,14 +99,14 @@ class GameSlider extends Component {
             swipeToSlide: true
         };
         if(this.state.redirect) {
-            return <Redirect push to={"/games/" + this.state.id} />
+            return <Redirect push to={{pathname: "/games/" + this.state.id, state: { title: this.state.title }}} />
         }
         return (
             <Slider {...settings}>
                 {this.props.data && this.props.data.map(n => {
                     return (
                         <div key={n._id}>
-                            <Card className="coverContainer" onClick={() => this.handleOnClick(n.guid)} >
+                            <Card className="coverContainer" onClick={() => this.handleOnClick(n.guid, n.title)} >
                                 <CardMedia image={n.image} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
                                 <CardContent>
                                     <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>
