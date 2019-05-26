@@ -22,7 +22,7 @@ export default function GameInfo(props) {
                         return <Chip key={p.id} label={p.name} style={{margin: '2px'}} />
                     })
                 )}
-                <Grid container spacing={8}>
+                <Grid container spacing={1}>
                     <Grid item>
                         <Typography><b>Release Date:</b></Typography>
                     </Grid>
@@ -30,7 +30,7 @@ export default function GameInfo(props) {
                         <Typography>{moment(props.data.original_release_date).format('D MMM YYYY')}</Typography>
                     </Grid>
                 </Grid>
-                <Grid container spacing={8}>
+                <Grid container spacing={1}>
                     <Grid item>
                         <Typography><b>Developers:</b></Typography>
                     </Grid>
@@ -42,7 +42,7 @@ export default function GameInfo(props) {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container spacing={8}>
+                <Grid container spacing={1}>
                     <Grid item>
                         <Typography><b>Publishers:</b></Typography>
                     </Grid>

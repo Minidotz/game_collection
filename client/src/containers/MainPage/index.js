@@ -59,9 +59,9 @@ export default class MainPage extends Component {
                         <GameSearch updateNav={this.props.updateNav} />
                     </Grid>
                 </Grid>
-                <Grid container spacing={8}>
+                <Grid container spacing={1}>
                     <Grid item xs={12} sm={6}>
-                        <Grid container spacing={8} direction="column">
+                        <Grid container spacing={1} direction="column">
                             <Grid item >
                                 <RecentItems data={this.state.gamesAdded} unit="games" title="Recently Added" />
                             </Grid>

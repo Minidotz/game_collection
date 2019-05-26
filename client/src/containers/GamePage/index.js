@@ -129,7 +129,7 @@ class GamePage extends PureComponent {
         }
         return (
             <div className="content">
-                <Grid container spacing={16}>
+                <Grid container spacing={2}>
                     <Grid item sm={4} xs={12}>
                         <Grid container direction="column">
                             <Grid item xs={12}>

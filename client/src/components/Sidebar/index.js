@@ -16,6 +16,8 @@ const styles = theme => ({
     primary: {}
 });
 
+const AdapterLink = React.forwardRef((props, ref) => <NavLink innerRef={ref} {...props} />);
+
 function Sidebar(props) {
     return (
         <Drawer open={props.isOpen} onClose={props.onClose}>
@@ -26,19 +28,19 @@ function Sidebar(props) {
                     </ListItemIcon>
                     <ListItemText primary="Game Collection" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={NavLink} to="/" exact>
+                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/" exact>
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
                     <ListItemText classes={{ primary: props.classes.primary }} primary="Home" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={NavLink} to="/collection" exact>
+                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/collection" exact>
                     <ListItemIcon>
                         <VideogameAssetIcon />
                     </ListItemIcon>
                     <ListItemText classes={{ primary: props.classes.primary }} primary="My Collection" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={NavLink} to="/contact" exact>
+                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/contact" exact>
                     <ListItemIcon>
                         <MailIcon />
                     </ListItemIcon>
