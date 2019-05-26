@@ -58,7 +58,7 @@ app.get('/games', (req, res) => {
     });
 });
 
-app.get('/game/:gameId', (req, res) => {
+app.get('/games/:gameId', (req, res) => {
     request({
         url: 'http://www.giantbomb.com/api/game/' + req.params.gameId,
         headers: {
@@ -77,7 +77,7 @@ app.get('/game/:gameId', (req, res) => {
     });
 });
 
-app.get('/game/screenshots/:gameId', (req, res) => {
+app.get('/games/:gameId/screenshots', (req, res) => {
     request({
         url: 'http://www.giantbomb.com/api/images/' + req.params.gameId,
         headers: {
@@ -96,7 +96,7 @@ app.get('/game/screenshots/:gameId', (req, res) => {
     });
 });
 
-app.get('/getSuggestions', (req, res) => {
+app.get('/suggestions', (req, res) => {
     request({
         url: 'http://www.giantbomb.com/api/search',
         headers: {
@@ -196,7 +196,7 @@ app.get('/releases/:platformId', (req, res) => {
     });
 });
 
-app.post('/add', (req, res) => {
+app.post('/games', (req, res) => {
     let data = req.body;
     let game = new Game({
         title: data.title,
@@ -221,15 +221,15 @@ app.post('/add', (req, res) => {
     });
 });
 
-app.post('/update', (req, res) => {
-    let id = req.body._id;
+app.put('/games/:gameId', (req, res) => {
+    let id = req.params.gameId;
     Game.findByIdAndUpdate(id, req.body, (err, res) => {
         if(err) console.log(err);
     })
 });
 
-app.post('/delete', (req, res) => {
-    let id = req.body.id;
+app.delete('/games/:gameId', (req, res) => {
+    let id = req.params.gameId;
     Game.findByIdAndRemove(id, (err, res) => {
         if(err) { 
             console.log(err);

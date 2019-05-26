@@ -10,7 +10,8 @@ export default class GameSearch extends Component {
         value: '',
         suggestions: [],
         redirect: false,
-        gameId: ''
+        gameId: '',
+        title: ''
     }
 
     onChange = (event, { newValue }) => {
@@ -36,7 +37,7 @@ export default class GameSearch extends Component {
     onSuggestionsFetchRequested = ({ value, reason }) => {
         clearTimeout(debounce);
         debounce = setTimeout(() => {
-            let url = new URL('../getSuggestions', window.location.origin);
+            let url = new URL('../suggestions', window.location.origin);
             url.searchParams.append('search', value);
             this.setState({suggestions: [{
                 name: 'Loading...'
@@ -69,7 +70,8 @@ export default class GameSearch extends Component {
                 if(res.ok) {
                     this.setState({
                         redirect: true,
-                        gameId: suggestion.guid
+                        gameId: suggestion.guid,
+                        title: suggestionValue
                     });
                 }
             }).catch(err => console.log(err));
@@ -101,7 +103,7 @@ export default class GameSearch extends Component {
 
     render() {
         if(this.state.redirect) {
-            return <Redirect push to={"/game/" + this.state.gameId} />;
+            return <Redirect push to={{pathname: "/games/" + this.state.gameId, state: { title: this.state.title }}} />;
         }
         const inputProps = {
             value: this.state.value,

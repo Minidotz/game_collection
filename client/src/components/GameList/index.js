@@ -9,7 +9,7 @@ export default function GameList(props) {
             {props.data.length > 0 ? (
                 props.data.map(d => {
                     return (
-                        <ListItem key={d._id} button component={Link} to={'/game/' + d.guid} >
+                        <ListItem key={d._id} button component={Link} to={{pathname: "/games/" + d.guid, state: { title: d.title }}} >
                             {d.image ? (
                                 <Avatar alt={d.title} src={d.image} />
                             ) : (

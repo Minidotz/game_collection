@@ -98,7 +98,7 @@ class GameSlider extends Component {
             swipeToSlide: true
         };
         if(this.state.redirect) {
-            return <Redirect push to={"/game/" + this.state.id} />
+            return <Redirect push to={"/games/" + this.state.id} />
         }
         return (
             <Slider {...settings}>

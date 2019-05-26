@@ -24,20 +24,20 @@ class GamePage extends PureComponent {
             .then(res => {
                 if (res) {
                     this.setState({ inCollection: true });
-                    this.props.updateNav(res.title);
                 }
             }).catch(err => console.log(err));
     }
 
     componentDidMount() {
+        this.props.updateNav(this.props.location.state.title);
         this.inCollection(this.props.match.params.id);
-        fetch('/game/' + this.props.match.params.id)
+        fetch('/games/' + this.props.match.params.id)
             .then(res => res.json())
             .then(res => {
                 this.setState({ gameData: res.results, loading: false });
-                this.props.updateNav(res.results.name)
+                this.props.this.props.updateNav(res.results.name)
             }).catch(err => console.log(err));
-        fetch('/game/screenshots/' + this.props.match.params.id)
+        fetch(`/games/${this.props.match.params.id}/screenshots`)
             .then(res => res.json())
             .then(res => {
                 this.setState({ screenshots: res.results });

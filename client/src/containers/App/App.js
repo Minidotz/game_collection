@@ -46,7 +46,7 @@ class App extends Component {
                     <Route exact path="/" component={MainPage} />
                     <Route path="/collection" component={CollectionPage} />
                     <Route path="/contact" component={Contact} />
-                    <Route path="/game/:id" render={routeProps => <GamePage {...routeProps} updateNav={this.updateNav} />} />
+                    <Route path="/games/:id" render={routeProps => <GamePage {...routeProps} updateNav={this.updateNav} />} />
                 </div>
             </Router>
         );
