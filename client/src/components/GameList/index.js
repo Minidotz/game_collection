@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom';
 export default function GameList(props) {
     return (
         <List>
-            {props.data.length > 0 ? (
+            {props.data && props.data.length > 0 ? (
                 props.data.map(d => {
                     return (
                         <ListItem key={d._id} button component={Link} to={{pathname: "/games/" + d.guid, state: { title: d.title }}} >
