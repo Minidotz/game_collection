@@ -27,7 +27,7 @@ export default function GameInfo(props) {
                         <Typography><b>Release Date:</b></Typography>
                     </Grid>
                     <Grid item>
-                        <Typography>{moment(props.data.original_release_date).format('D MMM YYYY')}</Typography>
+                        <Typography>{props.data.original_release_date && moment(props.data.original_release_date).format('D MMM YYYY')}</Typography>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>
