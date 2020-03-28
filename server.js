@@ -10,7 +10,7 @@ const API_KEY = process.env.API_KEY;
 const DB_NAME = process.env.DB_NAME;
 const moment = require('moment');
 const multer = require('multer');
-const request = require('request');
+const axios = require('axios').default;
 const imgStoragePath = 'client/public/img/games/';
 
 let storage = multer.diskStorage({
@@ -21,7 +21,7 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true, useFindAndModify: false }, (err) =>{
+mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true }, (err) =>{
     if(err) {
         console.error('Unable to connect to MongoDB server. Error:', err.stack);
         process.exit(1);
@@ -59,57 +59,56 @@ app.get('/games', (req, res) => {
 });
 
 app.get('/games/:gameId', (req, res) => {
-    request({
+    axios({
         url: 'http://www.giantbomb.com/api/game/' + req.params.gameId,
         headers: {
             'User-Agent': 'myUseragent'
         },
-        qs: {
+        params: {
             format: 'json',
             api_key: API_KEY
-        },
-        json: true
-    }, (e, r, json) => {
-        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
-            json.results.myImage = '../img/games/img-' + req.params.gameId;
         }
-        res.json(json);
+    }).then(r => {
+        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
+            r.data.results.myImage = '../img/games/img-' + req.params.gameId;
+        }
+        res.json(r.data);
     });
 });
 
 app.get('/games/:gameId/screenshots', (req, res) => {
-    request({
+    axios({
         url: 'http://www.giantbomb.com/api/images/' + req.params.gameId,
         headers: {
             'User-Agent': 'myUseragent'
         },
-        qs: {
+        params: {
             format: 'json',
             api_key: API_KEY
-        },
-        json: true
-    }, (e, r, json) => {
-        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
-            json.results.myImage = '../img/games/img-' + req.params.gameId;
         }
-        res.json(json);
+    }).then(r => {
+        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
+            r.data.results.myImage = '../img/games/img-' + req.params.gameId;
+        }
+        res.json(r.data);
     });
 });
 
 app.get('/suggestions', (req, res) => {
-    request({
+    axios({
         url: 'http://www.giantbomb.com/api/search',
         headers: {
             'User-Agent': 'myUseragent'
         },
-        qs: {
+        params: {
             format: 'json',
             api_key: API_KEY,
             query: req.query.search,
             resources: 'game',
             field_list: 'name,guid'
-        }
-    }).pipe(res);
+        },
+        responseType: 'stream'
+    }).then(r => r.data.pipe(res));
 });
 
 app.get('/inCollection/:gameId', (req, res) => {
@@ -168,31 +167,29 @@ app.get('/platforms', (req, res) => {
 
 app.get('/releases/:platformId', (req, res) => {
     const limit = req.query.limit || 100;
-    request({
+    axios({
         url: 'http://www.giantbomb.com/api/releases',
         headers: {
             'User-Agent': 'myUseragent'
         },
-        qs: {
+        params: {
             api_key: API_KEY,
             limit: limit,
             format: 'json',
             sort: 'release_date:desc',
             field_list: 'id,game,name,image,platform',
             filter: `release_date:${moment().subtract(30, 'days').format('Y-MM-DD')}|${moment().format('Y-MM-DD')},region:1,platform:${req.params.platformId}`
-        },
-        json: true
-    }, (e, r, json) => {
-        let formatted = {
-            results: json.results.map(item => ({
+        }
+    }).then(r => {
+        res.json({
+            results: r.data.results.map(item => ({
                 _id: item.guid,
                 guid: `3030-${item.game.id}`,
                 title: item.name,
                 image: item.image.icon_url,
                 platform: item.platform
             }))
-        };
-        res.json(formatted);
+        });
     });
 });
 
@@ -263,12 +260,13 @@ app.post('/add_to_collection', (req, res, next) => {
         }
         else {
             if(data.image && !fs.existsSync(imgStoragePath + 'img-' + g.guid)) {
-                request({
+                axios({
                     url: data.image,
                     headers: {
                         'User-Agent': 'myUseragent'
-                    }
-                }).pipe(fs.createWriteStream(imgStoragePath + 'img-' + g.guid));
+                    },
+                    responseType: 'stream'
+                }).then(r => r.data.pipe(fs.createWriteStream(imgStoragePath + 'img-' + g.guid)));
             }
             res.sendStatus(200);
         }
