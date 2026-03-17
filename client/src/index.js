@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './containers/App/App';
 import registerServiceWorker from './registerServiceWorker';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider,createTheme } from '@mui/material/styles';
 
-const theme = createMuiTheme({
+const theme = createTheme({
     palette: {
         primary: {
             main: '#ff8a65',
@@ -18,13 +18,12 @@ const theme = createMuiTheme({
         useNextVariants: true
     }
 });
-function MyApp() {
-    return (
-        <MuiThemeProvider theme={theme}>
-            <App />
-        </MuiThemeProvider>
-    );
-}
 
-ReactDOM.render(<MyApp />, document.getElementById('root'));
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+root.render(
+    <ThemeProvider theme={theme}>
+        <App />
+    </ThemeProvider>
+);
 registerServiceWorker();

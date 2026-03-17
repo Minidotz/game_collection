@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Toolbar, Typography, Select, MenuItem, CircularProgress } from '@material-ui/core';
+import { Paper, Toolbar, Typography, Select, MenuItem, CircularProgress } from '@mui/material';
 import GameList from '../GameList';
 
 export default class Releases extends Component {

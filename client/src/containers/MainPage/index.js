@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, CircularProgress } from '@material-ui/core';
+import { Grid, CircularProgress } from '@mui/material';
 import GameSearch from '../../components/GameSearch';
 import RecentItems from '../../components/RecentItems';
 import Releases from '../../components/Releases';

@@ -7,6 +7,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
+const RAWG_KEY = process.env.RAWG_KEY;
 const DB_NAME = process.env.DB_NAME;
 const moment = require('moment');
 const multer = require('multer');
@@ -21,9 +22,9 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
-mongoose.connect('mongodb://localhost/' + DB_NAME, { useCreateIndex: true, useNewUrlParser: true, useFindAndModify: false }, (err) =>{
+mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, (err) =>{
     if(err) {
-        console.error('Unable to connect to MongoDB server. Error:', err.stack);
+        console.error(`Unable to connect to MongoDB server. Error:`, err.stack);
         process.exit(1);
     }
     else {
@@ -59,57 +60,95 @@ app.get('/games', (req, res) => {
 });
 
 app.get('/games/:gameId', (req, res) => {
+    const rawgId = req.params.gameId;
+    if (!RAWG_KEY) {
+        console.error('RAWG_KEY not configured in environment');
+        return res.status(502).json({ error: 'RAWG_KEY not configured' });
+    }
+
     request({
-        url: 'http://www.giantbomb.com/api/game/' + req.params.gameId,
-        headers: {
-            'User-Agent': 'myUseragent'
-        },
-        qs: {
-            format: 'json',
-            api_key: API_KEY
-        },
-        json: true
+        url: `https://api.rawg.io/api/games/${rawgId}`,
+        headers: { 'User-Agent': 'myUseragent' },
+        qs: { key: RAWG_KEY },
+        json: true,
     }, (e, r, json) => {
-        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
-            json.results.myImage = '../img/games/img-' + req.params.gameId;
+        if (e || !json) {
+            console.error('Error fetching RAWG game details', e || json);
+            return res.status(502).json({ results: null });
         }
-        res.json(json);
+
+        const guid = json && json.id ? String(json.id) : String(req.params.gameId);
+
+        const result = {
+            name: json.name,
+            guid: guid,
+            description: json.description, // HTML
+            deck: json.short_description || '',
+            image: {
+                medium_url: json.background_image,
+            },
+            // RAWG: genres is an array of {id, name}
+            genres: Array.isArray(json.genres) ? json.genres.map(g => ({ id: g.id, name: g.name })) : [],
+            // Normalize platforms to array of { id, name }
+            platforms: Array.isArray(json.platforms)
+                ? json.platforms.map(p => ({ id: p.platform && p.platform.id ? p.platform.id : null, name: p.platform && p.platform.name ? p.platform.name : (p.name || null) }))
+                : [],
+            original_release_date: json.released || (json.releases && json.releases[0] && json.releases[0].date) || null,
+            developers: Array.isArray(json.developers) ? json.developers.map(d => ({ name: d.name })) : [],
+            publishers: Array.isArray(json.publishers) ? json.publishers.map(p => ({ name: p.name })) : [],
+        };
+
+        if (fs.existsSync(imgStoragePath + 'img-' + guid)) {
+            result.myImage = '../img/games/img-' + guid;
+        }
+
+        res.json({ results: result });
     });
 });
 
 app.get('/games/:gameId/screenshots', (req, res) => {
+    const rawgId = req.params.gameId;
+    if (!RAWG_KEY) {
+        console.error('RAWG_KEY not configured in environment');
+        return res.status(502).json({ error: 'RAWG_KEY not configured' });
+    }
+
     request({
-        url: 'http://www.giantbomb.com/api/images/' + req.params.gameId,
-        headers: {
-            'User-Agent': 'myUseragent'
-        },
-        qs: {
-            format: 'json',
-            api_key: API_KEY
-        },
-        json: true
+        url: `https://api.rawg.io/api/games/${rawgId}/screenshots`,
+        headers: { 'User-Agent': 'myUseragent' },
+        qs: { key: RAWG_KEY, page_size: 20 },
+        json: true,
     }, (e, r, json) => {
-        if(fs.existsSync(imgStoragePath + 'img-' + req.params.gameId)) {
-            json.results.myImage = '../img/games/img-' + req.params.gameId;
+        if (e || !json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG screenshots', e || json);
+            return res.status(502).json({ results: [] });
         }
-        res.json(json);
+
+        const results = json.results.map(s => ({ original_url: s.image, small_url: s.image }));
+        res.json({ results });
     });
 });
 
 app.get('/suggestions', (req, res) => {
+    if (!RAWG_KEY) {
+        console.error('RAWG_KEY not configured in environment');
+        return res.status(502).json({ results: [] });
+    }
+
     request({
-        url: 'http://www.giantbomb.com/api/search',
-        headers: {
-            'User-Agent': 'myUseragent'
-        },
-        qs: {
-            format: 'json',
-            api_key: API_KEY,
-            query: req.query.search,
-            resources: 'game',
-            field_list: 'name,guid'
+        url: 'https://api.rawg.io/api/games',
+        headers: { 'User-Agent': 'myUseragent' },
+        qs: { key: RAWG_KEY, search: req.query.search, page_size: 10 },
+        json: true,
+    }, (e, r, json) => {
+        if (e || !json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG search results', e || json);
+            return res.status(502).json({ results: [] });
         }
-    }).pipe(res);
+
+        const results = json.results.map(g => ({ name: g.name, guid: g.id ? String(g.id) : String(g.slug || g.name) }));
+        res.json({ results });
+    });
 });
 
 app.get('/inCollection/:gameId', (req, res) => {
@@ -168,30 +207,67 @@ app.get('/platforms', (req, res) => {
 
 app.get('/releases/:platformId', (req, res) => {
     const limit = req.query.limit || 100;
+    // Use RAWG as a replacement for GiantBomb releases endpoint
+    // Map our internal platform IDs to platform names (used for filtering)
+    const PLATFORM_MAP = {
+        94: 'PC',
+        17: 'MAC',
+        146: 'PS4',
+        35: 'PS3',
+        20: 'Xbox 360',
+        145: 'Xbox One',
+        157: 'Switch',
+        117: '3DS',
+        139: 'Wii U',
+    };
+
+    if (!RAWG_KEY) {
+        console.error('RAWG_KEY not configured in environment');
+        return res.status(502).json({ error: 'RAWG_KEY not configured' });
+    }
+
+    const platformName = PLATFORM_MAP[req.params.platformId];
+    const endDate = moment().format('YYYY-MM-DD');
+    const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+
     request({
-        url: 'http://www.giantbomb.com/api/releases',
+        url: 'https://api.rawg.io/api/games',
         headers: {
             'User-Agent': 'myUseragent'
         },
         qs: {
-            api_key: API_KEY,
-            limit: limit,
-            format: 'json',
-            sort: 'release_date:desc',
-            field_list: 'id,game,name,image,platform',
-            filter: `release_date:${moment().subtract(30, 'days').format('Y-MM-DD')}|${moment().format('Y-MM-DD')},region:1,platform:${req.params.platformId}`
+            key: RAWG_KEY,
+            dates: `${startDate},${endDate}`,
+            ordering: '-released',
+            page_size: limit
         },
         json: true
     }, (e, r, json) => {
-        let formatted = {
-            results: json.results.map(item => ({
-                _id: item.guid,
-                guid: `3030-${item.game.id}`,
-                title: item.name,
-                image: item.image.icon_url,
-                platform: item.platform
-            }))
+        if (e || !json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG releases or malformed response', e || json);
+            return res.status(502).json({ results: [] });
+        }
+
+        let results = json.results;
+        if (platformName) {
+            results = results.filter(g =>
+                Array.isArray(g.platforms) &&
+                g.platforms.some(p => p.platform && p.platform.name && p.platform.name.toLowerCase().includes(platformName.toLowerCase()))
+            );
+        }
+
+        const formatted = {
+            results: results
+                .filter(item => item.id !== undefined && item.id !== null)
+                .map(item => ({
+                    _id: item.id,
+                    guid: String(item.id),
+                    title: item.name,
+                    image: item.background_image,
+                    platform: item.platforms,
+                })),
         };
+
         res.json(formatted);
     });
 });

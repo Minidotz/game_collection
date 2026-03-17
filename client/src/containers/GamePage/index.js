@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
-import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@material-ui/core';
-import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@material-ui/icons';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@mui/material';
+import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import GameInfo from '../../components/GameInfo';
 import ImgSlider from '../../components/ImgSlider';
 
@@ -29,15 +30,31 @@ class GamePage extends PureComponent {
     }
 
     componentDidMount() {
-        this.props.updateNav(this.props.location.state.title);
-        this.inCollection(this.props.match.params.id);
-        fetch('/games/' + this.props.match.params.id)
+        // Safely derive the game id from router props (support direct loads / refreshes)
+        const id = (this.props.match && this.props.match.params && this.props.match.params.id)
+            ? this.props.match.params.id
+            : (this.props.location && this.props.location.pathname && this.props.location.pathname.split('/').pop());
+
+        if (!id) {
+            console.warn('GamePage: no game id available in props');
+            return;
+        }
+
+        // Check nav updater exists, but avoid relying on location.state which may be undefined
+        if (this.props.updateNav && this.props.location && this.props.location.state && this.props.location.state.title) {
+            this.props.updateNav(this.props.location.state.title);
+        }
+
+        this.inCollection(id);
+
+        fetch('/games/' + id)
             .then(res => res.json())
             .then(res => {
                 this.setState({ gameData: res.results, loading: false });
-                this.props.this.props.updateNav(res.results.name)
+                if (this.props.updateNav) this.props.updateNav(res.results && res.results.name ? res.results.name : '');
             }).catch(err => console.log(err));
-        fetch(`/games/${this.props.match.params.id}/screenshots`)
+
+        fetch(`/games/${id}/screenshots`)
             .then(res => res.json())
             .then(res => {
                 this.setState({ screenshots: res.results });
@@ -136,7 +153,7 @@ class GamePage extends PureComponent {
                                 <input type="file" accept="image/jpeg" id={"img-" + this.state.gameData.guid} style={{ display: 'none' }} onClick={this.handleClick} onChange={this.uploadPic} />
                                 <label htmlFor={"img-" + this.state.gameData.guid}>
                                     <ButtonBase component="span" onClick={this.handleClick}>
-                                        <img src={this.state.gameData.myImage ? this.state.gameData.myImage : this.state.gameData.image.medium_url} alt="" width="100%" />
+                                        <img src={this.state.gameData.myImage ? this.state.gameData.myImage : (this.state.gameData.image && this.state.gameData.image.medium_url)} alt="" width="100%" />
                                     </ButtonBase>
                                 </label>
                             </Grid>
@@ -157,10 +174,13 @@ class GamePage extends PureComponent {
                                 {this.state.tabValue === 0 && (
                                     <Paper square>
                                         {this.state.gameData.description ? (
-                                            <Typography dangerouslySetInnerHTML={{ __html: overviewPattern.exec(this.state.gameData.description)[0].replace(/style=".*?(?:")/g, "") }} style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                            (() => {
+                                                const html = this.state.gameData.description.replace(/style=\".*?\"/g, '');
+                                                return <Typography dangerouslySetInnerHTML={{ __html: html }} style={{ overflowX: 'hidden', padding: '0.5em' }} />;
+                                            })()
                                         ) : (
-                                                <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
-                                            )}
+                                            <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                        )}
                                     </Paper>
                                 )}
                                 {this.state.tabValue === 1 && (
@@ -196,4 +216,14 @@ class GamePage extends PureComponent {
     }
 }
 
-export default GamePage;
+function withRouter(Component) {
+    return function(props) {
+        const params = useParams();
+        const location = useLocation();
+        const navigate = useNavigate();
+        const match = { params };
+        return <Component {...props} match={match} location={location} navigate={navigate} />;
+    };
+}
+
+export default withRouter(GamePage);

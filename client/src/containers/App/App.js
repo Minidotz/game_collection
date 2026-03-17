@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from '../MainPage';
 import Contact from '../Contact';
 import GamePage from '../GamePage';
@@ -42,11 +42,12 @@ class App extends Component {
                 <div>
                     <Navbar showBack={this.state.showBack} title={this.state.title} goBack={this.goBack} toggleDrawer={this.toggleDrawer} />
                     <Sidebar isOpen={this.state.isSidebarOpen} onClose={this.toggleDrawer} />
-
-                    <Route exact path="/" component={MainPage} />
-                    <Route path="/collection" component={CollectionPage} />
-                    <Route path="/contact" component={Contact} />
-                    <Route path="/games/:id" render={routeProps => <GamePage {...routeProps} updateNav={this.updateNav} />} />
+                    <Routes>
+                        <Route exact path="/" element={<MainPage />} />
+                        <Route path="/collection" element={<CollectionPage />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/games/:id" element={<GamePage updateNav={this.updateNav} />} />
+                    </Routes>
                 </div>
             </Router>
         );

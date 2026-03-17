@@ -1,8 +1,7 @@
 import React from 'react';
-import { Dialog, DialogContent, IconButton, Toolbar } from '@material-ui/core';
+import { Dialog, DialogContent, IconButton, Toolbar } from '@mui/material';
 import GameSearch from '../GameSearch';
-import CloseIcon from '@material-ui/icons/Close';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
+import CloseIcon from '@mui/icons-material/Close';
 
 function SearchDialog(props) {
     return (
@@ -19,4 +18,4 @@ function SearchDialog(props) {
     );
 }
 
-export default withMobileDialog()(SearchDialog);
+export default SearchDialog;

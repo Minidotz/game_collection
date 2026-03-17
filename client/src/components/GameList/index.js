@@ -1,6 +1,6 @@
 import React from 'react';
-import { List, ListItem, Avatar, ListItemText, ListItemAvatar } from '@material-ui/core';
-import { Image as ImgIcon} from '@material-ui/icons'
+import { List, ListItem, Avatar, ListItemText, ListItemAvatar } from '@mui/material';
+import { Image as ImgIcon} from '@mui/icons-material'
 import {Link} from 'react-router-dom';
 
 export default function GameList(props) {

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@material-ui/core';
+import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@mui/material';
 import Slider from 'react-slick';
 import './main.css';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import SearchDialog from '../../components/SearchDialog';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default class CollectionPage extends Component {
     state = {
@@ -99,7 +99,7 @@ class GameSlider extends Component {
             swipeToSlide: true
         };
         if(this.state.redirect) {
-            return <Redirect push to={{pathname: "/games/" + this.state.id, state: { title: this.state.title }}} />
+            return <Navigate push to={{pathname: "/games/" + this.state.id, state: { title: this.state.title }}} />
         }
         return (
             <Slider {...settings}>

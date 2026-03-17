@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Button, Avatar, withStyles } from '@material-ui/core';
+import { Typography, Button, Avatar, Box } from '@mui/material';
 
 const styles = {
     root: {
@@ -15,15 +15,15 @@ const styles = {
     }
 }
 
-const UserNavbarItem = ({ classes }) => {
+const UserNavbarItem = () => {
     return (
-        <div className={classes.root}>
+        <Box sx={styles.root}>
             <Button disableRipple>
-                <Avatar className={classes.avatar}>SP</Avatar>
-                <Typography variant="subtitle2" color="inherit" className={classes.nameText}>Stratos</Typography>
+                <Avatar sx={styles.avatar}>SP</Avatar>
+                <Typography variant="subtitle2" color="inherit" sx={styles.nameText}>Stratos</Typography>
             </Button>
-        </div>
+        </Box>
     )
 }
 
-export default withStyles(styles)(UserNavbarItem);
+export default UserNavbarItem

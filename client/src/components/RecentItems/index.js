@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Paper, Toolbar, Typography, Select, MenuItem } from '@material-ui/core';
+import { Paper, Toolbar, Typography, Select, MenuItem } from '@mui/material';
 import GameList from '../GameList';
 
 export default class RecentItems extends Component {

@@ -1,22 +1,20 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
-import { Home as HomeIcon, VideogameAsset as VideogameAssetIcon, Mail as MailIcon } from '@material-ui/icons';
-import { NavLink } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import { Drawer, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
+import { Home as HomeIcon, VideogameAsset as VideogameAssetIcon, Mail as MailIcon } from '@mui/icons-material';
+import { Link, NavLink } from 'react-router-dom';
 
-const styles = theme => ({
+const styles = {
     listItem: {
         '&.active': {
-            backgroundColor: theme.palette.primary.main
+            backgroundColor: 'primary.main'
         },
         '&:hover': {
-            backgroundColor: theme.palette.secondary.main
+            backgroundColor: 'secondary.main'
         }
-    },
-    primary: {}
-});
+    }
+}
 
-const AdapterLink = React.forwardRef((props, ref) => <NavLink innerRef={ref} {...props} />);
+// const AdapterLink = React.forwardRef((props, ref) => <NavLink innerRef={ref} {...props} />);
 
 function Sidebar(props) {
     return (
@@ -28,27 +26,27 @@ function Sidebar(props) {
                     </ListItemIcon>
                     <ListItemText primary="Game Collection" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/" exact>
+                <ListItem button sx={styles.listItem} component={NavLink} to="/">
                     <ListItemIcon>
                         <HomeIcon />
                     </ListItemIcon>
-                    <ListItemText classes={{ primary: props.classes.primary }} primary="Home" />
+                    <ListItemText primary="Home" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/collection" exact>
+                <ListItem button sx={styles.listItem} component={NavLink} to="/collection">
                     <ListItemIcon>
                         <VideogameAssetIcon />
                     </ListItemIcon>
-                    <ListItemText classes={{ primary: props.classes.primary }} primary="My Collection" />
+                    <ListItemText primary="My Collection" />
                 </ListItem>
-                <ListItem button className={props.classes.listItem} component={AdapterLink} to="/contact" exact>
+                <ListItem button sx={styles.listItem} component={NavLink} to="/contact">
                     <ListItemIcon>
                         <MailIcon />
                     </ListItemIcon>
-                    <ListItemText classes={{ primary: props.classes.primary }} primary="Contact" />
+                    <ListItemText primary="Contact" />
                 </ListItem>
             </List>
         </Drawer>
     );
 }
 
-export default withStyles(styles)(Sidebar);
+export default Sidebar

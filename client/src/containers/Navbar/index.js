@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
-import { ArrowBack, Menu as MenuIcon } from '@material-ui/icons';
+import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
+import { ArrowBack, Menu as MenuIcon } from '@mui/icons-material';
 import UserNavbarItem from '../../components/UserNavbarItem';
 
 

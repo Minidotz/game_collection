@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { MenuItem, Paper, TextField, InputAdornment } from '@material-ui/core';
+import { MenuItem, Paper, TextField, InputAdornment } from '@mui/material';
 import Autosuggest from 'react-autosuggest';
-import {Redirect} from 'react-router-dom';
-import SearchIcon from '@material-ui/icons/Search';
+import {Navigate} from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
 
 let debounce;
 export default class GameSearch extends Component {
@@ -103,13 +103,12 @@ export default class GameSearch extends Component {
 
     render() {
         if(this.state.redirect) {
-            return <Redirect push to={{pathname: "/games/" + this.state.gameId, state: { title: this.state.title }}} />;
+            return <Navigate push to={{pathname: "/games/" + this.state.gameId, state: { title: this.state.title }}} />;
         }
         const inputProps = {
             value: this.state.value,
             onChange: this.onChange,
             placeholder: 'Search a game',
-            disableUnderline: true,
             startAdornment: (
                 <InputAdornment position="start">
                     <SearchIcon  />
