@@ -1,122 +1,100 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@mui/material';
-import Slider from 'react-slick';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
 import './main.css';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SearchDialog from '../../components/SearchDialog';
 import SearchIcon from '@mui/icons-material/Search';
 
-export default class CollectionPage extends Component {
-    state = {
-        response: null,
-        loading: true,
-        search: false
-    };
+export default function CollectionPage(props) {
+    const [response, setResponse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState(false);
 
-    loadData = () => {
-        this.callApi()
-            .then(res => this.setState({ response: res, loading: false }))
-            .catch(err => console.log(err));
-    }
+    useEffect(() => {
+        let mounted = true;
+        (async function load() {
+            try {
+                const res = await fetch('/games');
+                const body = await res.json();
+                if (res.status !== 200) throw new Error(body.message);
+                if (mounted) {
+                    setResponse(body);
+                    setLoading(false);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        })();
+        return () => (mounted = false);
+    }, []);
 
-    componentDidMount() {
-        this.loadData();
-    }
+    const openSearch = () => setSearch(true);
+    const closeSearch = () => setSearch(false);
 
-    callApi = async () => {
-        const response = await fetch('/games');
-        const body = await response.json();
-
-        if (response.status !== 200) throw Error(body.message);
-        return body;
-    }
-
-    openSearch = () => {
-        this.setState({search: true});
-    }
-
-    closeSearch = () => {
-        this.setState({search: false});
-    }
-
-    render() {
-        return (
-            <div className="content">
-                <Typography variant="h5" gutterBottom>My Collection</Typography>
-                <Grid container>
-                    <Grid item xs={12}>
-                        <GameSlider data={this.state.response} updateNav={this.props.updateNav} />
-                    </Grid>
+    return (
+        <div className="content">
+            <Typography variant="h5" gutterBottom>My Collection</Typography>
+            <Grid container>
+                <Grid item xs={12}>
+                    <GameSlider data={response} updateNav={props.updateNav} />
                 </Grid>
-                <SearchDialog search={this.state.search} closeSearch={this.closeSearch} />
-                <Fab color="secondary" onClick={this.openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
-                    <SearchIcon />
-                </Fab>
-            </div>
-        );
-    }
+            </Grid>
+            <SearchDialog search={search} closeSearch={closeSearch} />
+            <Fab color="secondary" onClick={openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                <SearchIcon />
+            </Fab>
+        </div>
+    );
 }
 
-class GameSlider extends Component {
-    state = {
-        redirect: false,
-        id: ''
-    }
+function GameSlider({ data }) {
+    const navigate = useNavigate();
 
-    handleOnClick = (game_id, title) => {
-        this.setState({
-            redirect: true,
-            id: game_id,
-            title: title
-        });
-    }
-
-    render() {
-        let settings = {
-            className: "center",
-            centerMode: true,
-            infinite: true,
-            slidesToShow: 5,
-            responsive: [
-                {
-                  breakpoint: 1024,
-                  settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 1
-                  }
-                },
-                {
-                  breakpoint: 600,
-                  settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                  }
-                }
-            ],
-            speed: 500,
-            autoplay: true,
-            arrows: false,
-            swipeToSlide: true
-        };
-        if(this.state.redirect) {
-            return <Navigate push to={{pathname: "/games/" + this.state.id, state: { title: this.state.title }}} />
+    const settings = {
+        modules: [Navigation, Autoplay],
+        spaceBetween: 12,
+        slidesPerView: 5,
+        loop: true,
+        autoplay: { delay: 3000, disableOnInteraction: false },
+        breakpoints: {
+            1024: { slidesPerView: 3 },
+            600: { slidesPerView: 1 }
         }
-        return (
-            <Slider {...settings}>
-                {this.props.data && this.props.data.map(n => {
-                    return (
-                        <div key={n._id}>
-                            <Card className="coverContainer" onClick={() => this.handleOnClick(n.guid, n.title)} >
-                                <CardMedia image={n.image} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
-                                <CardContent>
-                                    <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    );
-                })
-                }
-            </Slider>
-        );
-    }
+    };
+
+    const handleOnClick = (game_id, title) => {
+        navigate(`/games/${game_id}`, { state: { title } });
+    };
+
+    const items = Array.isArray(data) ? data : (data && data.results ? data.results : []);
+
+    return (
+        <Swiper
+            modules={[Navigation, Autoplay]}
+            navigation={false}
+            spaceBetween={settings.spaceBetween}
+            slidesPerView={settings.slidesPerView}
+            loop={settings.loop}
+            autoplay={settings.autoplay}
+            breakpoints={settings.breakpoints}
+        >
+            {items.map(n => {
+                const imageUrl = n && n.image ? (typeof n.image === 'string' ? n.image : (n.image.medium_url || n.image.original_url || '')) : '';
+                return (
+                    <SwiperSlide key={n._id}>
+                        <Card className="coverContainer" onClick={() => handleOnClick(n.guid, n.title)} >
+                            <CardMedia image={imageUrl} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
+                            <CardContent>
+                                <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>
+                            </CardContent>
+                        </Card>
+                    </SwiperSlide>
+                );
+            })}
+        </Swiper>
+    );
 }

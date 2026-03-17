@@ -1,20 +1,20 @@
-@import "~slick-carousel/slick/slick.css";
-@import "~slick-carousel/slick/slick-theme.css";
-
-.imgSlider .slick-slide {
-    margin: 5px;
+/* Minimal styling for Swiper-based ImgSlider */
+.imgSlider {
+  padding: 8px 0;
 }
-
-.imgSlider .slick-slide img {
-    max-height: 50vh;
+.slider-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
 }
-
-.slick-arrow:before {
-    opacity: 0.25;
-    color: black;
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000;
 }
-
-.slick-arrow:hover, .slick-arrow:focus {
-    opacity: 0.75;
-    color: black;
+.swiper-pagination-bullet {
+  background: rgba(0,0,0,0.4);
+}
+.mySwiper {
+  padding-bottom: 24px;
 }

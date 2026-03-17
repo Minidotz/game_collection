@@ -1,29 +1,30 @@
-import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import './main.css';
-import Slider from 'react-slick';
 
 export default function ImgSlider(props) {
-    let settings = {
-        className: 'imgSlider',
-        infinite: false,
-        arrows: true,
-        swipeToSlide: true,
-        variableWidth: true,
-        dots: true
-    };
-    let imgIndex = 0;
+    const images = Array.isArray(props.images) ? props.images.slice(0, props.limit || 10) : [];
     return (
-        <Slider {...settings}>
-            {props.images && props.images.slice(0, props.limit).map(img => {
-                return (
-                    <div key={imgIndex++}>
-                        <a href={img.original_url} >
-                            <img src={img.small_url} alt="" />
+        <div className="imgSlider">
+            <Swiper
+                modules={[Navigation, Pagination]}
+                navigation
+                pagination={{ clickable: true }}
+                spaceBetween={12}
+                slidesPerView={'auto'}
+                className="mySwiper"
+            >
+                {images.map((img, idx) => (
+                    <SwiperSlide key={idx} style={{ width: props.slideWidth || 240 }}>
+                        <a href={img.original_url} target="_blank" rel="noreferrer">
+                            <img src={img.small_url || img.original_url} alt="" className="slider-img" />
                         </a>
-                    </div>
-                );
-            })
-            }
-        </Slider>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+        </div>
     );
 }
