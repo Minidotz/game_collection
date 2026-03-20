@@ -1,6 +1,7 @@
 {
     "name": "game_collection",
     "version": "1.0.0",
+    "type": "module",
     "scripts": {
         "client": "cd client && npm run start",
         "server": "nodemon --inspect server.js",

@@ -1,17 +1,26 @@
-const express = require('express');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import path from 'path';
+import dotenv from 'dotenv';
+import { pipeline } from 'stream/promises';
+import { Readable } from 'stream';
+import fs from 'fs';
+import mongoose from 'mongoose';
+import { format, subDays } from 'date-fns';
+import multer from 'multer';
+import { fileURLToPath } from 'url';
+import Game from './models/game.js';
+import Search from './models/search.js';
+
+dotenv.config();
+
 const app = express();
-const { pipeline } = require('stream/promises');
-const { Readable } = require('stream');
-const fs = require('fs');
-const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
 const RAWG_KEY = process.env.RAWG_KEY;
 const DB_NAME = process.env.DB_NAME;
-const { format, subDays } = require('date-fns');
-const multer = require('multer');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const imgStoragePath = 'client/public/img/games/';
 
 let storage = multer.diskStorage({
@@ -22,6 +31,7 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
+mongoose.set('strictQuery', false);
 mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, (err) =>{
     if(err) {
         console.error(`Unable to connect to MongoDB server. Error:`, err.stack);
@@ -31,10 +41,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, (err) =>{
         console.log('Connected to MongoDB server successfully!');
     }
 });
-mongoose.set('strictQuery', false);
-
-let Game = require('./models/game');
-let Search = require('./models/search');
 
 app.use(express.json({limit: '10mb'}));
 app.use(express.urlencoded({limit: '10mb', extended: true}));

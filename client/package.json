@@ -2,6 +2,7 @@
   "name": "game_collection",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
