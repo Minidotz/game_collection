@@ -1,3 +1,5 @@
+@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";
+
 #contactContainer {
     text-align: center;
 }
@@ -7,5 +9,3 @@
     margin-right: 0.5em;
     margin-top: 80px;
 }
-
-@import "https://fonts.googleapis.com/css?family=Roboto:300,400,500";

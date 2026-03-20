@@ -3,26 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.10.16",
-    "@mui/material": "^5.10.17",
-    "moment": "^2.29.4",
-    "react": "^18.2.0",
-    "react-animated-slider": "^1.1.4",
-    "react-autosuggest": "^10.1.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.4",
-    "react-scripts": "^5.0.1",
-    "swiper": "^12.1.2"
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "latest",
+    "@mui/material": "latest",
+    "date-fns": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "latest",
+    "swiper": "latest"
   },
   "scripts": {
-    "start": "set \"DANGEROUSLY_DISABLE_HOST_CHECK=true\" && react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest"
   },
-  "proxy": "http://localhost:5000/",
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -30,6 +27,10 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "react-test-renderer": "^18.2.0"
+    "@testing-library/react": "latest",
+    "@vitejs/plugin-react": "latest",
+    "jsdom": "latest",
+    "vite": "latest",
+    "vitest": "latest"
   }
 }
