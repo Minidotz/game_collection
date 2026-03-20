@@ -4,6 +4,7 @@ import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBa
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import GameInfo from '../../components/GameInfo';
 import ImgSlider from '../../components/ImgSlider';
+import pageStyles from '../../styles/page.module.css';
 
 export default function GamePage() {
     const { id: routeId } = useParams();
@@ -172,14 +173,14 @@ export default function GamePage() {
 
     if (!gameData) {
         return (
-            <div className="content">
+            <div className={pageStyles.content}>
                 <Typography>Game not found.</Typography>
             </div>
         );
     }
 
     return (
-        <div className="content">
+        <div className={pageStyles.content}>
             <Grid container spacing={2}>
                 <Grid item sm={4} xs={12}>
                     <Grid container direction="column">

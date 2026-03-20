@@ -4,7 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import './main.css';
+import styles from './index.module.css';
+import pageStyles from '../../styles/page.module.css';
 import { useNavigate } from 'react-router-dom';
 import SearchDialog from '../../components/SearchDialog';
 import SearchIcon from '@mui/icons-material/Search';
@@ -36,7 +37,7 @@ export default function CollectionPage(props) {
     const closeSearch = () => setSearch(false);
 
     return (
-        <div className="content">
+        <div className={pageStyles.content}>
             <Typography variant="h5" gutterBottom>My Collection</Typography>
             <Grid container>
                 <Grid item xs={12}>
@@ -86,7 +87,7 @@ function GameSlider({ data }) {
                 const imageUrl = n && n.image ? (typeof n.image === 'string' ? n.image : (n.image.medium_url || n.image.original_url || '')) : '';
                 return (
                     <SwiperSlide key={n._id}>
-                        <Card className="coverContainer" onClick={() => handleOnClick(n.guid, n.title)} >
+                        <Card className={styles.coverContainer} onClick={() => handleOnClick(n.guid, n.title)} >
                             <CardMedia image={imageUrl} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
                             <CardContent>
                                 <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>

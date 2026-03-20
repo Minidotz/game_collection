@@ -2,17 +2,17 @@
 .imgSlider {
   padding: 8px 0;
 }
-.slider-img {
+.sliderImg {
   display: block;
   width: 100%;
   height: auto;
   border-radius: 4px;
 }
-.swiper-button-next,
-.swiper-button-prev {
+:global(.swiper-button-next),
+:global(.swiper-button-prev) {
   color: #000;
 }
-.swiper-pagination-bullet {
+:global(.swiper-pagination-bullet) {
   background: rgba(0,0,0,0.4);
 }
 .mySwiper {

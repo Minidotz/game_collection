@@ -3,6 +3,7 @@ import { Grid, CircularProgress } from '@mui/material';
 import GameSearch from '../../components/GameSearch';
 import RecentItems from '../../components/RecentItems';
 import Releases from '../../components/Releases';
+import pageStyles from '../../styles/page.module.css';
 
 export default function MainPage({ updateNav }) {
     const [gamesAdded, setGamesAdded] = useState([]);
@@ -67,25 +68,31 @@ export default function MainPage({ updateNav }) {
     }
 
     return (
-        <div className="content">
-            <Grid container justify="center" >
-                <Grid item xs={12} sm={9}>
-                    <GameSearch updateNav={updateNav} />
-                </Grid>
-            </Grid>
+        <div className={pageStyles.content}>
             <Grid container spacing={1}>
-                <Grid item xs={12} sm={6}>
-                    <Grid container spacing={1} direction="column">
-                        <Grid item >
-                            <RecentItems data={gamesAdded} unit="games" title="Recently Added" />
-                        </Grid>
-                        <Grid item >
-                            <RecentItems data={searches} unit="searches" title="Recently Searched" />
+                <Grid item xs={12}>
+                    <Grid container>
+                        <Grid item xs={12} sm={12}>
+                            <GameSearch updateNav={updateNav} />
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <Releases title="New Releases" platforms={platforms} />
+                <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} sm={6}>
+                            <Grid container spacing={1} direction="column">
+                                <Grid item>
+                                    <RecentItems data={gamesAdded} unit="games" title="Recently Added" />
+                                </Grid>
+                                <Grid item>
+                                    <RecentItems data={searches} unit="searches" title="Recently Searched" />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Releases title="New Releases" platforms={platforms} />
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
         </div>
