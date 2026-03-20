@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useOutletContext, useParams } from 'react-router-dom';
-import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@mui/material';
+import { Box, CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@mui/material';
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import GameInfo from '../../components/GameInfo';
 import ImgSlider from '../../components/ImgSlider';
@@ -165,27 +165,27 @@ export default function GamePage() {
 
     if (loading) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
                 <CircularProgress />
-            </div>
+            </Box>
         );
     }
 
     if (!gameData) {
         return (
-            <div className={pageStyles.content}>
+            <Box className={pageStyles.content}>
                 <Typography>Game not found.</Typography>
-            </div>
+            </Box>
         );
     }
 
     return (
-        <div className={pageStyles.content}>
+        <Box className={pageStyles.content}>
             <Grid container spacing={2}>
                 <Grid item sm={4} xs={12}>
                     <Grid container direction="column">
                         <Grid item xs={12}>
-                            <input type="file" accept="image/jpeg" id={'img-' + gameData.guid} style={{ display: 'none' }} onClick={handleClick} onChange={uploadPic} />
+                            <Box component="input" type="file" accept="image/jpeg" id={'img-' + gameData.guid} sx={{ display: 'none' }} onClick={handleClick} onChange={uploadPic} />
                             <label htmlFor={'img-' + gameData.guid}>
                                 <ButtonBase component="span" onClick={handleClick}>
                                     <img src={gameData.myImage ? gameData.myImage : (gameData.image && gameData.image.medium_url)} alt="" width="100%" />
@@ -210,16 +210,15 @@ export default function GamePage() {
                                 <Paper square>
                                     {gameData.description ? (
                                         (() => {
-                                            const html = gameData.description.replace(/style=\".*?\"/g, '');
-                                            return <Typography dangerouslySetInnerHTML={{ __html: html }} style={{ overflowX: 'hidden', padding: '0.5em' }} />;
+                                            return <Typography dangerouslySetInnerHTML={{ __html: gameData.description }} sx={{ overflowX: 'hidden', p: '0.5em' }} />;
                                         })()
                                     ) : (
-                                        <Typography style={{ overflowX: 'hidden', padding: '0.5em' }} />
+                                        <Typography sx={{ overflowX: 'hidden', p: '0.5em' }} />
                                     )}
                                 </Paper>
                             )}
                             {tabValue === 1 && (
-                                <Paper square style={{ padding: '2em' }}>
+                                <Paper square sx={{ p: '2em' }}>
                                     <ImgSlider images={screenshots} limit={10} />
                                 </Paper>
                             )}
@@ -229,14 +228,14 @@ export default function GamePage() {
             </Grid>
             <Tooltip title="Remove from Collection">
                 <Zoom in={inCollection} >
-                    <Fab color="secondary" onClick={removeFromCollection} aria-label="remove" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                    <Fab color="secondary" onClick={removeFromCollection} aria-label="remove" sx={{ position: 'fixed', right: 30, bottom: 30 }}>
                         <DeleteIcon />
                     </Fab>
                 </Zoom>
             </Tooltip>
             <Tooltip title="Add to Collection">
                 <Zoom in={!inCollection}>
-                    <Fab color="primary" onClick={addToCollection} aria-label="add" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+                    <Fab color="primary" onClick={addToCollection} aria-label="add" sx={{ position: 'fixed', right: 30, bottom: 30 }}>
                         <FavoriteIcon />
                     </Fab>
                 </Zoom>
@@ -246,6 +245,6 @@ export default function GamePage() {
                     Close
                 </Button>
             } />
-        </div>
+        </Box>
     );
 }

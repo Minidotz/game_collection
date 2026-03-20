@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -8,7 +9,7 @@ import styles from './index.module.css';
 export default function ImgSlider(props) {
     const images = Array.isArray(props.images) ? props.images.slice(0, props.limit || 10) : [];
     return (
-        <div className={styles.imgSlider}>
+        <Box className={styles.imgSlider}>
             <Swiper
                 modules={[Navigation, Pagination]}
                 navigation
@@ -25,6 +26,6 @@ export default function ImgSlider(props) {
                     </SwiperSlide>
                 ))}
             </Swiper>
-        </div>
+        </Box>
     );
 }

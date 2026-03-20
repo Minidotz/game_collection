@@ -76,7 +76,7 @@ export default function GameSearch() {
     );
 
     return (
-        <Paper elevation={1} style={{ padding: '0.5em' }} square>
+        <Paper elevation={1} sx={{ p: '0.5em' }} square>
             <Autocomplete
                 freeSolo
                 fullWidth

@@ -19,13 +19,13 @@ export default function GameInfo(props) {
                 <Typography><b>Genres:</b></Typography>
                 {props.data.genres && (
                     props.data.genres.map(g => {
-                        return <Chip key={g.id} label={g.name} style={{margin: '2px'}} />
+                        return <Chip key={g.id} label={g.name} sx={{ m: '2px' }} />
                     })
                 )}
                 <Typography><b>Platforms:</b></Typography>
                 {props.data.platforms && (
                     props.data.platforms.map(p => {
-                        return <Chip key={p.id} label={p.name} style={{margin: '2px'}} />
+                        return <Chip key={p.id} label={p.name} sx={{ m: '2px' }} />
                     })
                 )}
                 <Grid container spacing={1}>
@@ -56,7 +56,7 @@ export default function GameInfo(props) {
                         <Typography>
                             {props.data.publishers && props.data.publishers.map(pub => {
                                 return pub.name;
-                            }).join(',')}
+                            }).join(', ')}
                         </Typography>
                     </Grid>
                 </Grid>

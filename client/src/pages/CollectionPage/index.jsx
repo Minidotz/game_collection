@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Typography, Grid, Card, CardMedia, CardContent, Fab } from '@mui/material';
+import { Box, Typography, Grid, Card, CardMedia, CardContent, Fab } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -37,7 +37,7 @@ export default function CollectionPage(props) {
     const closeSearch = () => setSearch(false);
 
     return (
-        <div className={pageStyles.content}>
+        <Box className={pageStyles.content}>
             <Typography variant="h5" gutterBottom>My Collection</Typography>
             <Grid container>
                 <Grid item xs={12}>
@@ -45,10 +45,10 @@ export default function CollectionPage(props) {
                 </Grid>
             </Grid>
             <SearchDialog search={search} closeSearch={closeSearch} />
-            <Fab color="secondary" onClick={openSearch} aria-label="search" style={{ position: 'fixed', right: '30px', bottom: '30px' }}>
+            <Fab color="secondary" onClick={openSearch} aria-label="search" sx={{ position: 'fixed', right: 30, bottom: 30 }}>
                 <SearchIcon />
             </Fab>
-        </div>
+        </Box>
     );
 }
 
@@ -88,7 +88,7 @@ function GameSlider({ data }) {
                 return (
                     <SwiperSlide key={n._id}>
                         <Card className={styles.coverContainer} onClick={() => handleOnClick(n.guid, n.title)} >
-                            <CardMedia image={imageUrl} title={n.title} style={{ height: '0', paddingTop: '100%' }} />
+                            <CardMedia image={imageUrl} title={n.title} sx={{ height: 0, pt: '100%' }} />
                             <CardContent>
                                 <Typography variant="subtitle1" align="center" noWrap>{n.title}</Typography>
                             </CardContent>

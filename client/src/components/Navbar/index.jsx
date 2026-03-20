@@ -14,7 +14,7 @@ const Navbar = ({ title, showBack, goBack, toggleDrawer }) => {
                         <MenuIcon />
                     )}
                 </IconButton>
-                <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
+                <Typography variant="h6" color="inherit" sx={{ flexGrow: 1 }}>
                     {title}
                 </Typography>
                 <UserNavbarItem />

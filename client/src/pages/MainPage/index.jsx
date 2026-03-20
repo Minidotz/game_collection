@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Grid, CircularProgress } from '@mui/material';
+import { Box, Grid, CircularProgress } from '@mui/material';
 import GameSearch from '../../components/GameSearch';
 import RecentItems from '../../components/RecentItems';
 import Releases from '../../components/Releases';
@@ -58,17 +58,16 @@ export default function MainPage({ updateNav }) {
             mounted = false;
         };
     }, []);
-
     if (loading) {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
                 <CircularProgress />
-            </div>
+            </Box>
         );
     }
 
     return (
-        <div className={pageStyles.content}>
+        <Box className={pageStyles.content}>
             <Grid container spacing={1}>
                 <Grid item xs={12}>
                     <Grid container>
@@ -95,6 +94,6 @@ export default function MainPage({ updateNav }) {
                     </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </Box>
     );
 }

@@ -19,7 +19,7 @@ const styles = {
 function Sidebar(props) {
     return (
         <Drawer open={props.isOpen} onClose={props.onClose}>
-            <List component="nav" style={{ width: 250 }}>
+            <List component="nav" sx={{ width: 250 }}>
                 <ListItem divider>
                     <ListItemIcon>
                         <img src="favicon.ico" width="32" height="32" alt="" />

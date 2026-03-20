@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Paper, Toolbar, Typography, Select, MenuItem, CircularProgress } from '@mui/material';
+import { Box, Paper, Toolbar, Typography, Select, MenuItem, CircularProgress } from '@mui/material';
 import GameList from '../GameList';
 
 export default function Releases({ title, platforms }) {
@@ -37,26 +37,26 @@ export default function Releases({ title, platforms }) {
 
     return (
         <Paper square>
-            <Toolbar style={{ backgroundColor: '#f7f7f7' }}>
-                <div>
+            <Toolbar sx={{ backgroundColor: '#f7f7f7' }}>
+                <Box>
                     <Typography variant="h6">
                         {title}
                     </Typography>
-                </div>
-                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+                </Box>
+                <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
                     {platforms.length > 0 && (
-                        <Select value={selectedPlatformId} style={{ margin: '0 5px' }} onChange={handleChange} >
+                        <Select value={selectedPlatformId} sx={{ mx: '5px' }} onChange={handleChange}>
                             {platforms.map(p => {
                                 return <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
                             })}
                         </Select>
                     )}
-                </div>
+                </Box>
             </Toolbar>
             {loading && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CircularProgress />
-                </div>
+                </Box>
             )}
             {!loading && (
                 <GameList data={releases} />

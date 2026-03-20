@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Box } from '@mui/material';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
 export default function AppLayout() {
+    const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showBack, setShowBack] = useState(false);
     const [title, setTitle] = useState('Game Collection');
@@ -20,14 +22,14 @@ export default function AppLayout() {
     const goBack = () => {
         setShowBack(false);
         setTitle('Game Collection');
-        window.history.back();
+        navigate(-1);
     };
 
     return (
-        <div>
+        <Box>
             <Navbar showBack={showBack} title={title} goBack={goBack} toggleDrawer={toggleDrawer} />
             <Sidebar isOpen={isSidebarOpen} onClose={toggleDrawer} />
             <Outlet context={{ updateNav }} />
-        </div>
+        </Box>
     );
 }
