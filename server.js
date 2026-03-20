@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import { format, subDays } from 'date-fns';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
+import sanitizeHtml from 'sanitize-html';
 import Game from './models/game.js';
 import Search from './models/search.js';
 
@@ -115,10 +116,19 @@ app.get('/games/:gameId', async (req, res) => {
         const json = await rawgFetchJson(`games/${rawgId}`, {});
         const guid = json && json.id ? String(json.id) : String(req.params.gameId);
 
+        const sanitizedDescription = sanitizeHtml(json.description || '', {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+            allowedAttributes: {
+                a: ['href', 'name', 'target', 'rel'],
+                img: ['src', 'alt'],
+            },
+            allowedSchemes: ['http', 'https', 'mailto'],
+        });
+
         const result = {
             name: json.name,
             guid: guid,
-            description: json.description, // HTML
+            description: sanitizedDescription,
             deck: json.short_description || '',
             image: {
                 medium_url: json.background_image,

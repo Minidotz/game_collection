@@ -16,7 +16,8 @@
         "dotenv": "latest",
         "express": "latest",
         "mongoose": "latest",
-        "multer": "latest"
+        "multer": "latest",
+        "sanitize-html": "latest"
     },
     "devDependencies": {
         "concurrently": "latest",
