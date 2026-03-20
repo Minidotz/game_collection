@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useOutletContext, useParams } from 'react-router-dom';
 import { CircularProgress, Typography, Grid, Tooltip, Button, Snackbar, ButtonBase, Paper, Tabs, Tab, Zoom, Fab } from '@mui/material';
 import { Favorite as FavoriteIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import GameInfo from '../../components/GameInfo';
 import ImgSlider from '../../components/ImgSlider';
 
-export default function GamePage({ updateNav }) {
+export default function GamePage() {
     const { id: routeId } = useParams();
     const location = useLocation();
+    const { updateNav } = useOutletContext() || {};
     const inCollectionControllerRef = useRef(null);
 
     const [loading, setLoading] = useState(true);

@@ -1,7 +1,6 @@
-import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import { ArrowBack, Menu as MenuIcon } from '@mui/icons-material';
-import UserNavbarItem from '../../components/UserNavbarItem';
+import UserNavbarItem from '../UserNavbarItem';
 
 
 const Navbar = ({ title, showBack, goBack, toggleDrawer }) => {

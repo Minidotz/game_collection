@@ -1,6 +1,4 @@
-import React from 'react';
-
-function Contact(props) {
+export default function Contact() {
     return (
         <div id="contactContainer" className="content">
             <p>
@@ -9,5 +7,3 @@ function Contact(props) {
         </div>
     );
 }
-
-export default Contact;

@@ -1,7 +1,6 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './containers/App/App';
+import App from './App/App';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
