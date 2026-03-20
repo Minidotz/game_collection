@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const fs = require('fs');
+import mongoose from 'mongoose';
+import fs from 'fs';
 
 const Schema = mongoose.Schema;
 
@@ -26,4 +26,4 @@ SearchSchema.pre('findOneAndUpdate', function () {
 });
 
 //Export model
-module.exports = mongoose.model('Search', SearchSchema);
+export default mongoose.model('Search', SearchSchema);

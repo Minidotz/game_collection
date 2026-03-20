@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const fs = require('fs');
+import mongoose from 'mongoose';
+import fs from 'fs';
 
 const Schema = mongoose.Schema;
 
@@ -29,4 +29,4 @@ GameSchema.pre('findOneAndUpdate', function () {
 });
 
 //Export model
-module.exports = mongoose.model('Game', GameSchema);
+export default mongoose.model('Game', GameSchema);

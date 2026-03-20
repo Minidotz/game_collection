@@ -1,8 +1,14 @@
 import React from 'react';
 import { Typography, Grid, Card, CardContent, CardHeader, Chip } from '@mui/material';
-import moment from 'moment';
+import { format, isValid, parseISO } from 'date-fns';
 
 export default function GameInfo(props) {
+    const releaseDate = props.data?.original_release_date;
+    const parsedReleaseDate = releaseDate ? parseISO(releaseDate) : null;
+    const formattedReleaseDate = parsedReleaseDate && isValid(parsedReleaseDate)
+        ? format(parsedReleaseDate, 'd MMM yyyy')
+        : 'TBD';
+
     return (
         <Card square>
             <CardHeader title="Game Info" />
@@ -27,7 +33,7 @@ export default function GameInfo(props) {
                         <Typography><b>Release Date:</b></Typography>
                     </Grid>
                     <Grid item>
-                        <Typography>{moment(props.data.original_release_date).format('D MMM YYYY')}</Typography>
+                        <Typography>{formattedReleaseDate}</Typography>
                     </Grid>
                 </Grid>
                 <Grid container spacing={1}>

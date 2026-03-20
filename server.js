@@ -1,17 +1,26 @@
-const express = require('express');
-const path = require('path');
-require('dotenv').config();
+import express from 'express';
+import path from 'path';
+import dotenv from 'dotenv';
+import { pipeline } from 'stream/promises';
+import { Readable } from 'stream';
+import fs from 'fs';
+import mongoose from 'mongoose';
+import { format, subDays } from 'date-fns';
+import multer from 'multer';
+import { fileURLToPath } from 'url';
+import Game from './models/game.js';
+import Search from './models/search.js';
+
+dotenv.config();
+
 const app = express();
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const mongoose = require('mongoose');
 const port = process.env.PORT || 5000;
 const API_KEY = process.env.API_KEY;
 const RAWG_KEY = process.env.RAWG_KEY;
 const DB_NAME = process.env.DB_NAME;
-const moment = require('moment');
-const multer = require('multer');
-const request = require('request');
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const imgStoragePath = 'client/public/img/games/';
 
 let storage = multer.diskStorage({
@@ -22,6 +31,7 @@ let storage = multer.diskStorage({
 })
 const upload = multer({storage: storage});
 
+mongoose.set('strictQuery', false);
 mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, (err) =>{
     if(err) {
         console.error(`Unable to connect to MongoDB server. Error:`, err.stack);
@@ -31,11 +41,46 @@ mongoose.connect('mongodb://127.0.0.1:27017/' + DB_NAME, (err) =>{
         console.log('Connected to MongoDB server successfully!');
     }
 });
-let Game = require('./models/game');
-let Search = require('./models/search');
 
-app.use(bodyParser.json({limit: '10mb'}));
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
+app.use(express.json({limit: '10mb'}));
+app.use(express.urlencoded({limit: '10mb', extended: true}));
+
+const rawgBaseUrl = 'https://api.rawg.io/api/';
+
+async function rawgFetchJson(endpoint, params) {
+    const url = new URL(endpoint, rawgBaseUrl);
+    const searchParams = new URLSearchParams({
+        key: RAWG_KEY,
+        ...params,
+    });
+    url.search = searchParams.toString();
+
+    const response = await fetch(url, {
+        headers: { 'User-Agent': 'game-collection' },
+    });
+
+    if (!response.ok) {
+        throw new Error(`RAWG request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+async function downloadImage(url, targetPath) {
+    const response = await fetch(url, {
+        headers: { 'User-Agent': 'game-collection' },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Image download failed: ${response.status} ${response.statusText}`);
+    }
+
+    if (!response.body) {
+        throw new Error('Image download failed: empty response body');
+    }
+
+    await pipeline(Readable.fromWeb(response.body), fs.createWriteStream(targetPath));
+}
 
 app.use(express.static(path.join(__dirname, 'client', 'public')));
 app.use(function(req, res, next) {
@@ -59,24 +104,15 @@ app.get('/games', (req, res) => {
     });
 });
 
-app.get('/games/:gameId', (req, res) => {
+app.get('/games/:gameId', async (req, res) => {
     const rawgId = req.params.gameId;
     if (!RAWG_KEY) {
         console.error('RAWG_KEY not configured in environment');
         return res.status(502).json({ error: 'RAWG_KEY not configured' });
     }
 
-    request({
-        url: `https://api.rawg.io/api/games/${rawgId}`,
-        headers: { 'User-Agent': 'myUseragent' },
-        qs: { key: RAWG_KEY },
-        json: true,
-    }, (e, r, json) => {
-        if (e || !json) {
-            console.error('Error fetching RAWG game details', e || json);
-            return res.status(502).json({ results: null });
-        }
-
+    try {
+        const json = await rawgFetchJson(`games/${rawgId}`, {});
         const guid = json && json.id ? String(json.id) : String(req.params.gameId);
 
         const result = {
@@ -103,62 +139,67 @@ app.get('/games/:gameId', (req, res) => {
         }
 
         res.json({ results: result });
-    });
+    } catch (error) {
+        console.error('Error fetching RAWG game details', error);
+        return res.status(502).json({ results: null });
+    }
 });
 
-app.get('/games/:gameId/screenshots', (req, res) => {
+app.get('/games/:gameId/screenshots', async (req, res) => {
     const rawgId = req.params.gameId;
     if (!RAWG_KEY) {
         console.error('RAWG_KEY not configured in environment');
         return res.status(502).json({ error: 'RAWG_KEY not configured' });
     }
 
-    request({
-        url: `https://api.rawg.io/api/games/${rawgId}/screenshots`,
-        headers: { 'User-Agent': 'myUseragent' },
-        qs: { key: RAWG_KEY, page_size: 20 },
-        json: true,
-    }, (e, r, json) => {
-        if (e || !json || !Array.isArray(json.results)) {
-            console.error('Error fetching RAWG screenshots', e || json);
+    try {
+        const json = await rawgFetchJson(`games/${rawgId}/screenshots`, { page_size: 20 });
+        if (!json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG screenshots', json);
             return res.status(502).json({ results: [] });
         }
 
         const results = json.results.map(s => ({ original_url: s.image, small_url: s.image }));
         res.json({ results });
-    });
+    } catch (error) {
+        console.error('Error fetching RAWG screenshots', error);
+        return res.status(502).json({ results: [] });
+    }
 });
 
-app.get('/suggestions', (req, res) => {
+app.get('/suggestions', async (req, res) => {
     if (!RAWG_KEY) {
         console.error('RAWG_KEY not configured in environment');
         return res.status(502).json({ results: [] });
     }
 
-    request({
-        url: 'https://api.rawg.io/api/games',
-        headers: { 'User-Agent': 'myUseragent' },
-        qs: { key: RAWG_KEY, search: req.query.search, page_size: 10 },
-        json: true,
-    }, (e, r, json) => {
-        if (e || !json || !Array.isArray(json.results)) {
-            console.error('Error fetching RAWG search results', e || json);
+    try {
+        const json = await rawgFetchJson('games', { search: req.query.search, page_size: 10 });
+        if (!json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG search results', json);
             return res.status(502).json({ results: [] });
         }
 
         const results = json.results.map(g => ({ name: g.name, guid: g.id ? String(g.id) : String(g.slug || g.name) }));
         res.json({ results });
-    });
+    } catch (error) {
+        console.error('Error fetching RAWG search results', error);
+        return res.status(502).json({ results: [] });
+    }
 });
 
 app.get('/inCollection/:gameId', (req, res) => {
     Game.findOne({ guid: req.params.gameId, inCollection: true }, (err, g) => {
-        if(err) {
+        if (err) {
             console.log(err);
+            return res.status(500).json({ error: 'Database error' });
         }
-        else {
-            g && res.json(g);
+
+        if (!g) {
+            return res.json({ found: false });
         }
+
+        return res.json({ found: true });
     });
 });
 
@@ -169,6 +210,7 @@ app.get('/searches', (req, res) => {
         }
         else {
             console.log(err);
+            res.status(500).json({ error: 'Database error' });
         }
     });
 });
@@ -205,7 +247,7 @@ app.get('/platforms', (req, res) => {
     res.json(platforms);
 });
 
-app.get('/releases/:platformId', (req, res) => {
+app.get('/releases/:platformId', async (req, res) => {
     const limit = req.query.limit || 100;
     // Use RAWG as a replacement for GiantBomb releases endpoint
     // Map our internal platform IDs to platform names (used for filtering)
@@ -227,24 +269,18 @@ app.get('/releases/:platformId', (req, res) => {
     }
 
     const platformName = PLATFORM_MAP[req.params.platformId];
-    const endDate = moment().format('YYYY-MM-DD');
-    const startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    const endDate = format(new Date(), 'yyyy-MM-dd');
+    const startDate = format(subDays(new Date(), 30), 'yyyy-MM-dd');
 
-    request({
-        url: 'https://api.rawg.io/api/games',
-        headers: {
-            'User-Agent': 'myUseragent'
-        },
-        qs: {
-            key: RAWG_KEY,
+    try {
+        const json = await rawgFetchJson('games', {
             dates: `${startDate},${endDate}`,
             ordering: '-released',
-            page_size: limit
-        },
-        json: true
-    }, (e, r, json) => {
-        if (e || !json || !Array.isArray(json.results)) {
-            console.error('Error fetching RAWG releases or malformed response', e || json);
+            page_size: limit,
+        });
+
+        if (!json || !Array.isArray(json.results)) {
+            console.error('Error fetching RAWG releases or malformed response', json);
             return res.status(502).json({ results: [] });
         }
 
@@ -269,7 +305,10 @@ app.get('/releases/:platformId', (req, res) => {
         };
 
         res.json(formatted);
-    });
+    } catch (error) {
+        console.error('Error fetching RAWG releases or malformed response', error);
+        return res.status(502).json({ results: [] });
+    }
 });
 
 app.post('/games', (req, res) => {
@@ -339,12 +378,9 @@ app.post('/add_to_collection', (req, res, next) => {
         }
         else {
             if(data.image && !fs.existsSync(imgStoragePath + 'img-' + g.guid)) {
-                request({
-                    url: data.image,
-                    headers: {
-                        'User-Agent': 'myUseragent'
-                    }
-                }).pipe(fs.createWriteStream(imgStoragePath + 'img-' + g.guid));
+                downloadImage(data.image, imgStoragePath + 'img-' + g.guid).catch((error) => {
+                    console.error('Error downloading game image', error);
+                });
             }
             res.sendStatus(200);
         }
